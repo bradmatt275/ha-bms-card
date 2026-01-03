@@ -545,23 +545,13 @@ export const cellGridStyles = css`
   }
 
   .cell-bar {
-    flex: 1 1 auto;
+    flex: 1 1 40px;
     min-width: 40px;
-    max-width: 80px;
     height: 5px;
     background: var(--divider-color, rgba(255, 255, 255, 0.1));
     border-radius: 3px;
     overflow: hidden;
     margin-left: 6px;
-  }
-
-  /* When wrapped, bar takes full width */
-  @media (max-width: 500px) {
-    .cell-bar {
-      flex-basis: 100%;
-      max-width: none;
-      margin-left: 0;
-    }
   }
 
   .cell-bar-fill {

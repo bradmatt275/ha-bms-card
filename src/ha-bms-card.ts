@@ -290,8 +290,14 @@ export class HABMSCard extends LitElement implements LovelaceCard {
       (a) => a.severity === "critical"
     );
 
+    // Set CSS variable for column-based width
+    const columnStyle = `--bms-columns: ${config.cells.columns};`;
+
     return html`
-      <ha-card class="${config.display.compact_mode ? "compact" : ""}">
+      <ha-card 
+        class="${config.display.compact_mode ? "compact" : ""}"
+        style="${columnStyle}"
+      >
         <!-- Header -->
         <div class="card-header">
           <span class="title">${config.title}</span>

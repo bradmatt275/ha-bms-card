@@ -60,6 +60,15 @@ export const cssVariables = css`
 export const cardStyles = css`
   ${cssVariables}
 
+  :host {
+    display: block;
+    /* Dynamic width based on column count - can be overridden by parent */
+    --bms-base-width: 320px;
+    --bms-column-width: 85px;
+    --bms-columns: 2;
+    max-width: calc(var(--bms-base-width) + (var(--bms-columns) - 2) * var(--bms-column-width));
+  }
+
   ha-card {
     padding: var(--bms-card-padding);
     border-radius: var(--bms-radius-card);
@@ -288,18 +297,18 @@ export const statusIndicatorStyles = css`
     background: var(--bms-info-container);
   }
 
-  svg {
+  svg.icon {
     width: 24px;
     height: 24px;
     fill: var(--secondary-text-color);
     transition: fill var(--bms-transition-duration) ease;
   }
 
-  .indicator.active svg {
+  .indicator.active svg.icon {
     fill: var(--bms-success);
   }
 
-  .indicator.active.charge svg {
+  .indicator.active.charge svg.icon {
     fill: var(--bms-info);
   }
 
@@ -310,43 +319,106 @@ export const statusIndicatorStyles = css`
     letter-spacing: 0.5px;
   }
 
-  .arrow {
-    width: 20px;
-    height: 20px;
+  /* Power flow arrow */
+  .power-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 16px;
+    min-width: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .power-flow .arrow {
+    width: 16px;
+    height: 16px;
     fill: var(--secondary-text-color);
     opacity: 0.3;
   }
 
-  .indicator.active .arrow {
-    opacity: 1;
-    animation: flow 1s ease-in-out infinite;
+  /* Charge arrow points RIGHT (toward SOC ring in center) */
+  .indicator.charge .power-flow .arrow {
+    /* Arrow already points right by default */
   }
 
-  @keyframes flow {
-    0%,
-    100% {
+  /* Discharge arrow points RIGHT (away from SOC ring toward Load) */
+  .indicator.discharge .power-flow .arrow {
+    /* Arrow already points right by default */
+  }
+
+  .indicator.active .power-flow .arrow {
+    opacity: 1;
+  }
+
+  .indicator.active.charge .power-flow .arrow {
+    fill: var(--bms-info);
+    animation: flow-right 1s ease-in-out infinite;
+  }
+
+  .indicator.active.discharge .power-flow .arrow {
+    fill: var(--bms-success);
+    animation: flow-right 1s ease-in-out infinite;
+  }
+
+  /* Flowing dots animation */
+  .flow-dots {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+
+  .indicator.active .flow-dots {
+    display: block;
+  }
+
+  .flow-dot {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .indicator.active.charge .flow-dot {
+    background: var(--bms-info);
+    animation: dot-flow-right 1.2s ease-in-out infinite;
+  }
+
+  .indicator.active.discharge .flow-dot {
+    background: var(--bms-success);
+    animation: dot-flow-right 1.2s ease-in-out infinite;
+  }
+
+  .flow-dot:nth-child(1) { animation-delay: 0s; }
+  .flow-dot:nth-child(2) { animation-delay: 0.4s; }
+  .flow-dot:nth-child(3) { animation-delay: 0.8s; }
+
+  @keyframes flow-right {
+    0%, 100% {
       transform: translateX(0);
     }
     50% {
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
   }
 
-  .indicator.charge .arrow {
-    transform: scaleX(-1);
-  }
-
-  .indicator.active.charge .arrow {
-    animation: flow-reverse 1s ease-in-out infinite;
-  }
-
-  @keyframes flow-reverse {
-    0%,
+  @keyframes dot-flow-right {
+    0% {
+      left: 0%;
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
     100% {
-      transform: scaleX(-1) translateX(0);
-    }
-    50% {
-      transform: scaleX(-1) translateX(4px);
+      left: 100%;
+      opacity: 0;
     }
   }
 `;

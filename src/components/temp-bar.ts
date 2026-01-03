@@ -3,7 +3,7 @@
  * Displays temperature sensor with progress bar
  */
 
-import { LitElement, html } from "lit";
+import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { tempBarStyles } from "../styles";
 import { formatTemperature, clamp } from "../utils/format";
@@ -16,15 +16,36 @@ export class BMSTempBar extends LitElement {
   @property({ type: Number }) critical = 50;
   @property({ type: Number }) min = 0;
   @property({ type: Number }) max = 60;
+  @property({ type: String }) entityId = "";
 
-  static styles = tempBarStyles;
+  static styles = [
+    tempBarStyles,
+    css`
+      .temp-bar.clickable {
+        cursor: pointer;
+      }
+      .temp-bar.clickable:hover {
+        background: var(--secondary-background-color, rgba(255, 255, 255, 0.05));
+        border-radius: 8px;
+      }
+    `
+  ];
 
   protected render() {
     const state = this._getState();
     const progressWidth = this._getProgressWidth();
+    const isClickable = !!this.entityId;
 
     return html`
-      <div class="temp-bar" role="meter" aria-valuenow="${this.value ?? 0}" aria-valuemin="${this.min}" aria-valuemax="${this.max}" aria-label="${this.label} temperature">
+      <div 
+        class="temp-bar ${isClickable ? 'clickable' : ''}" 
+        role="meter" 
+        aria-valuenow="${this.value ?? 0}" 
+        aria-valuemin="${this.min}" 
+        aria-valuemax="${this.max}" 
+        aria-label="${this.label} temperature"
+        @click=${isClickable ? this._handleClick : undefined}
+      >
         <div class="temp-header">
           <span class="temp-label">${this.label}</span>
           <span class="temp-value ${state}">${formatTemperature(this.value)}°C</span>
@@ -57,6 +78,20 @@ export class BMSTempBar extends LitElement {
     const range = this.max - this.min;
     if (range === 0) return 0;
     return clamp(((this.value - this.min) / range) * 100, 0, 100);
+  }
+
+  /**
+   * Handle click - dispatch event to open more-info dialog
+   */
+  private _handleClick(): void {
+    if (!this.entityId) return;
+    this.dispatchEvent(
+      new CustomEvent("hass-more-info", {
+        bubbles: true,
+        composed: true,
+        detail: { entityId: this.entityId },
+      })
+    );
   }
 }
 

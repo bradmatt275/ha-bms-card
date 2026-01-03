@@ -392,6 +392,17 @@ export class HABMSCard extends LitElement implements LovelaceCard {
   }
 
   /**
+   * Get temperature cell entity IDs for click handlers
+   * Only returns entity IDs that actually exist in Home Assistant
+   */
+  private _getTempCellEntityIds(): string[] {
+    const tempEntities = this._entityResolver.getTempCellEntities();
+    return tempEntities.map((entityId) =>
+      entityId && this.hass.states[entityId] ? entityId : ""
+    );
+  }
+
+  /**
    * Render primary stats (voltage, current, power, capacity)
    */
   private _renderPrimaryStats(): TemplateResult {
@@ -511,6 +522,8 @@ export class HABMSCard extends LitElement implements LovelaceCard {
       return nothing;
     }
 
+    const tempEntityIds = this._getTempCellEntityIds();
+
     return html`
       <div class="temp-section">
         <div class="temp-grid">
@@ -521,6 +534,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 .value=${temp}
                 .warning=${config.temperature.warning}
                 .critical=${config.temperature.critical}
+                .entityId=${tempEntityIds[i] || ""}
               ></bms-temp-bar>
             `
           )}

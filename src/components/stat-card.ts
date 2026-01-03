@@ -44,7 +44,7 @@ export class BMSStat extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 2px;
-      padding: 4px 0;
+      padding: 8px;
     }
 
     .stat.large {

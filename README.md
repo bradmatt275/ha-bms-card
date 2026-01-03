@@ -2,7 +2,7 @@
 
 A custom Lovelace card for displaying Battery Management System (BMS) data in Home Assistant. Works with any BMS that exposes sensors to Home Assistant (JK-BMS, Jakiper/Pylon, Daly, etc.).
 
-![HA BMS Card Screenshot](docs/examples/screenshots/Screenshot%202026-01-03%20at%2011.42.52%20am.png)
+![HA BMS Card Screenshot](docs/examples/screenshots/bms-card-screenshot.png)
 
 ## Features
 
@@ -112,6 +112,44 @@ entities:
       severity: critical
     - entity: binary_sensor.pack_1_mos_otp
       label: "MOS Over Temp"
+      severity: warning
+```
+
+## Alerts & Alarms
+
+The card monitors BMS alarm/fault entities and displays active alerts in the header.
+
+### Default Alarms
+
+When using `entity_pattern.prefix`, the card automatically monitors these alarms:
+
+| Alarm | Entity Pattern | Severity |
+|-------|---------------|----------|
+| Cell OVP | `binary_sensor.{prefix}_cell_ovp` | Critical |
+| Cell UVP | `binary_sensor.{prefix}_cell_uvp` | Critical |
+| Pack UVP | `binary_sensor.{prefix}_pack_uvp` | Critical |
+| Discharge OCP | `binary_sensor.{prefix}_dsg_ocp` | Critical |
+| Charge OCP | `binary_sensor.{prefix}_chg_ocp` | Critical |
+| Short Circuit | `binary_sensor.{prefix}_scp_protection` | Critical |
+| MOS Over Temp | `binary_sensor.{prefix}_mos_otp` | Critical |
+| Env Over Temp | `binary_sensor.{prefix}_env_otp` | Warning |
+| Cell Fault | `binary_sensor.{prefix}_bms_cell_fault` | Critical |
+| NTC Fault | `binary_sensor.{prefix}_bms_ntc_fault` | Critical |
+| Low SOC | `binary_sensor.{prefix}_alarm_soc_low` | Warning |
+| Low Battery | `binary_sensor.{prefix}_battery_low_power` | Warning |
+
+### Custom Alarms
+
+Override or add to the defaults in your config:
+
+```yaml
+entities:
+  alarms:
+    - entity: binary_sensor.pack_1_cell_ovp
+      label: "Cell OVP"
+      severity: critical
+    - entity: binary_sensor.pack_1_alarm_soc_low
+      label: "Low SOC"
       severity: warning
 ```
 

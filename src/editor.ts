@@ -15,6 +15,7 @@ import {
   DEFAULT_DISPLAY_CONFIG,
   SUPPORTED_CELL_COUNTS,
   SUPPORTED_COLUMN_COUNTS,
+  DEFAULT_ALARMS,
 } from "./const";
 
 @customElement("ha-bms-card-editor")
@@ -152,6 +153,20 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
     .cell-override label {
       font-size: 11px;
     }
+
+    mwc-button {
+      --mdc-theme-primary: var(--primary-color);
+    }
+
+    mwc-icon-button {
+      --mdc-icon-button-size: 36px;
+      --mdc-icon-size: 20px;
+      color: var(--secondary-text-color);
+    }
+
+    mwc-icon-button:hover {
+      color: var(--error-color, #f44336);
+    }
   `;
 
   /**
@@ -208,6 +223,12 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           >
             Entities
           </div>
+          <div
+            class="tab ${this._activeTab === "alerts" ? "active" : ""}"
+            @click=${() => (this._activeTab = "alerts")}
+          >
+            Alerts
+          </div>
         </div>
 
         <div class="tab-content">
@@ -216,6 +237,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           ${this._activeTab === "thresholds" ? this._renderThresholdsTab() : nothing}
           ${this._activeTab === "display" ? this._renderDisplayTab() : nothing}
           ${this._activeTab === "entities" ? this._renderEntitiesTab() : nothing}
+          ${this._activeTab === "alerts" ? this._renderAlertsTab() : nothing}
         </div>
       </div>
     `;
@@ -581,6 +603,104 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
     `;
   }
 
+  /**
+   * Render alerts configuration tab
+   */
+  private _renderAlertsTab(): TemplateResult {
+    const alarms = this._config.entities?.alarms || [];
+    const overrides = this._config.entities?.alarm_overrides || {};
+
+    return html`
+      <div class="help-text" style="margin-bottom: 12px;">
+        Configure alarm entities to monitor. When using an entity prefix, default alarms are auto-generated.
+        Override specific entities below or add custom alarms.
+      </div>
+
+      <div class="section-header">Default Alarm Entity Overrides</div>
+      <div class="help-text" style="margin-bottom: 8px;">
+        Override the auto-generated entity IDs for default alarms. Leave empty to use the pattern.
+      </div>
+      
+      <div class="cell-grid-overrides">
+        ${DEFAULT_ALARMS.map((alarm) => html`
+          <div class="form-group cell-override">
+            <label>${alarm.label}</label>
+            <ha-selector
+              .hass=${this.hass}
+              .selector=${{ entity: { domain: ["binary_sensor"] } }}
+              .value=${overrides[alarm.key] || ""}
+              @value-changed=${(e: CustomEvent) => this._updateAlarmOverride(alarm.key, e.detail.value || "")}
+            ></ha-selector>
+          </div>
+        `)}
+      </div>
+
+      <div class="section-header" style="margin-top: 24px;">Additional Custom Alarms</div>
+      <div class="help-text" style="margin-bottom: 8px;">
+        Add extra alarms beyond the defaults.
+      </div>
+      
+      ${alarms.map((alarm, index) => this._renderAlarmRow(alarm, index))}
+      
+      <div style="margin-top: 12px;">
+        <mwc-button @click=${this._addAlarm}>
+          <ha-icon icon="mdi:plus"></ha-icon>
+          Add Alarm
+        </mwc-button>
+      </div>
+    `;
+  }
+
+  /**
+   * Render a single alarm configuration row
+   */
+  private _renderAlarmRow(alarm: { entity: string; label: string; severity: "warning" | "critical" }, index: number): TemplateResult {
+    return html`
+      <div class="alarm-row" style="display: flex; gap: 8px; align-items: flex-end; margin-bottom: 12px; flex-wrap: wrap;">
+        <div class="form-group" style="flex: 2; min-width: 150px;">
+          <label>Entity</label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ entity: { domain: ["binary_sensor"] } }}
+            .value=${alarm.entity}
+            @value-changed=${(e: CustomEvent) => this._updateAlarm(index, "entity", e.detail.value || "")}
+          ></ha-selector>
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 100px;">
+          <label>Label</label>
+          <ha-textfield
+            .value=${alarm.label}
+            @input=${(e: Event) => this._updateAlarm(index, "label", (e.target as HTMLInputElement).value)}
+          ></ha-textfield>
+        </div>
+        <div class="form-group" style="flex: 1; min-width: 100px;">
+          <label>Severity</label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{
+              select: {
+                options: [
+                  { value: "warning", label: "Warning" },
+                  { value: "critical", label: "Critical" },
+                ],
+                mode: "dropdown",
+              },
+            }}
+            .value=${alarm.severity}
+            @value-changed=${(e: CustomEvent) => this._updateAlarm(index, "severity", e.detail.value)}
+          ></ha-selector>
+        </div>
+        <mwc-icon-button
+          @click=${() => this._removeAlarm(index)}
+          title="Remove alarm"
+          style="margin-bottom: 4px;"
+        >
+          <ha-icon icon="mdi:delete"></ha-icon>
+        </mwc-icon-button>
+      </div>
+    `;
+  }
+
   // ============================================================================
   // Config Update Methods
   // ============================================================================
@@ -687,6 +807,60 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       delete entities.cell_voltages;
     }
 
+    this._config = { ...this._config, entities };
+    this._fireConfigChanged();
+  }
+
+  private _addAlarm(): void {
+    const entities = { ...this._config.entities };
+    const alarms = [...(entities.alarms || [])];
+    alarms.push({ entity: "", label: "New Alarm", severity: "warning" as const });
+    entities.alarms = alarms;
+    this._config = { ...this._config, entities };
+    this._fireConfigChanged();
+  }
+
+  private _removeAlarm(index: number): void {
+    const entities = { ...this._config.entities };
+    const alarms = [...(entities.alarms || [])];
+    alarms.splice(index, 1);
+    if (alarms.length > 0) {
+      entities.alarms = alarms;
+    } else {
+      delete entities.alarms;
+    }
+    this._config = { ...this._config, entities };
+    this._fireConfigChanged();
+  }
+
+  private _updateAlarm(index: number, key: string, value: string): void {
+    const entities = { ...this._config.entities };
+    const alarms = [...(entities.alarms || [])];
+    if (alarms[index]) {
+      alarms[index] = { ...alarms[index], [key]: value };
+      entities.alarms = alarms;
+      this._config = { ...this._config, entities };
+      this._fireConfigChanged();
+    }
+  }
+
+  private _updateAlarmOverride(key: string, value: string): void {
+    const entities = { ...this._config.entities };
+    const overrides = { ...(entities.alarm_overrides || {}) };
+    
+    if (value) {
+      overrides[key] = value;
+    } else {
+      delete overrides[key];
+    }
+    
+    // Remove the overrides object if empty
+    if (Object.keys(overrides).length > 0) {
+      entities.alarm_overrides = overrides;
+    } else {
+      delete entities.alarm_overrides;
+    }
+    
     this._config = { ...this._config, entities };
     this._fireConfigChanged();
   }

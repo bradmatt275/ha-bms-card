@@ -5,7 +5,7 @@
 
 import { HomeAssistant } from "custom-card-helpers";
 import { BMSCardConfig, AlarmConfig } from "./types";
-import { DEFAULT_TEMPLATES, getDefaultTempRanges } from "./const";
+import { DEFAULT_TEMPLATES, DEFAULT_ALARMS, getDefaultTempRanges } from "./const";
 
 /**
  * Resolves entity IDs from configuration, supporting both
@@ -198,9 +198,44 @@ export class EntityResolver {
   private _resolveAlarmEntities(): void {
     const alarms = this._config.entities?.alarms;
 
-    if (Array.isArray(alarms)) {
+    // Use explicit alarms if provided
+    if (Array.isArray(alarms) && alarms.length > 0) {
       this._alarmEntities = alarms;
       alarms.forEach((alarm) => {
+        this._allEntityIds.push(alarm.entity);
+      });
+      return;
+    }
+
+    // Generate default alarms from template patterns if prefix is available
+    if (this._prefix) {
+      const overrides = this._config.entities?.alarm_overrides || {};
+      
+      this._alarmEntities = DEFAULT_ALARMS
+        .map((defaultAlarm) => {
+          // Check for override first
+          const override = overrides[defaultAlarm.key];
+          if (override) {
+            return {
+              entity: override,
+              label: defaultAlarm.label,
+              severity: defaultAlarm.severity,
+            };
+          }
+          
+          // Fall back to template
+          const template = DEFAULT_TEMPLATES[defaultAlarm.key];
+          if (!template) return null;
+          
+          return {
+            entity: this._applyTemplate(template),
+            label: defaultAlarm.label,
+            severity: defaultAlarm.severity,
+          };
+        })
+        .filter((alarm): alarm is AlarmConfig => alarm !== null);
+
+      this._alarmEntities.forEach((alarm) => {
         this._allEntityIds.push(alarm.entity);
       });
     }

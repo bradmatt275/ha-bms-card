@@ -53,19 +53,48 @@ export const DEFAULT_TEMPLATES: DefaultTemplates = {
   balancing_active: "binary_sensor.{prefix}_balancing",
   heater: "binary_sensor.{prefix}_heater",
 
-  // Common alarm patterns
+  // Protection Status alarms (critical - active protection triggered)
   alarm_cell_ovp: "binary_sensor.{prefix}_cell_ovp",
   alarm_cell_uvp: "binary_sensor.{prefix}_cell_uvp",
   alarm_pack_uvp: "binary_sensor.{prefix}_pack_uvp",
   alarm_discharge_ocp: "binary_sensor.{prefix}_dsg_ocp",
   alarm_charge_ocp: "binary_sensor.{prefix}_chg_ocp",
-  alarm_scp: "binary_sensor.{prefix}_scp",
+  alarm_scp: "binary_sensor.{prefix}_scp_protection",
   alarm_mos_otp: "binary_sensor.{prefix}_mos_otp",
   alarm_env_otp: "binary_sensor.{prefix}_env_otp",
   alarm_env_utp: "binary_sensor.{prefix}_env_utp",
+  alarm_dsg_otp: "binary_sensor.{prefix}_dsg_otp",
+  alarm_chg_otp: "binary_sensor.{prefix}_chg_otp",
+  alarm_dsg_utp: "binary_sensor.{prefix}_dsg_utp",
+  alarm_chg_utp: "binary_sensor.{prefix}_chg_utp",
+
+  // Alarm Status (warning level - pre-protection alerts)
   alarm_soc_low: "binary_sensor.{prefix}_alarm_soc_low",
+  alarm_cell_ov: "binary_sensor.{prefix}_alarm_cell_ov",
+  alarm_cell_uv: "binary_sensor.{prefix}_alarm_cell_uv",
+  alarm_pack_ov: "binary_sensor.{prefix}_alarm_pack_ov",
+  alarm_pack_uv: "binary_sensor.{prefix}_alarm_pack_uv",
+  alarm_dsg_oc: "binary_sensor.{prefix}_alarm_dsg_oc",
+  alarm_chg_oc: "binary_sensor.{prefix}_alarm_chg_oc",
+  alarm_mos_ot: "binary_sensor.{prefix}_alarm_mos_ot",
+  alarm_env_ot: "binary_sensor.{prefix}_alarm_env_ot",
+  alarm_env_ut: "binary_sensor.{prefix}_alarm_env_ut",
+  alarm_dsg_ot: "binary_sensor.{prefix}_alarm_dsg_ot",
+  alarm_chg_ot: "binary_sensor.{prefix}_alarm_chg_ot",
+  alarm_dsg_ut: "binary_sensor.{prefix}_alarm_dsg_ut",
+  alarm_chg_ut: "binary_sensor.{prefix}_alarm_chg_ut",
+
+  // Fault Status (critical - hardware faults)
   alarm_cell_fault: "binary_sensor.{prefix}_bms_cell_fault",
   alarm_ntc_fault: "binary_sensor.{prefix}_bms_ntc_fault",
+  alarm_heater_fault: "binary_sensor.{prefix}_bms_heater_fault",
+  alarm_ccb_fault: "binary_sensor.{prefix}_bms_ccb_fault",
+  alarm_sampling_fault: "binary_sensor.{prefix}_bms_sampling_fault",
+  alarm_dsg_mos_fault: "binary_sensor.{prefix}_bms_dsg_mos_fault",
+  alarm_chg_mos_fault: "binary_sensor.{prefix}_bms_chg_mos_fault",
+
+  // Low battery
+  alarm_battery_low: "binary_sensor.{prefix}_battery_low_power",
 };
 
 // ============================================================================
@@ -74,21 +103,31 @@ export const DEFAULT_TEMPLATES: DefaultTemplates = {
 
 /**
  * Default alarm configurations when using template patterns
- * Users can override these in their config
+ * Only the most critical alarms are enabled by default to avoid clutter
+ * Users can add more alarms in their config
  */
 export const DEFAULT_ALARMS = [
+  // Protection status (critical - these mean protection has been triggered)
   { key: "alarm_cell_ovp", label: "Cell OVP", severity: "critical" as const },
   { key: "alarm_cell_uvp", label: "Cell UVP", severity: "critical" as const },
   { key: "alarm_pack_uvp", label: "Pack UVP", severity: "critical" as const },
   { key: "alarm_discharge_ocp", label: "Discharge OCP", severity: "critical" as const },
   { key: "alarm_charge_ocp", label: "Charge OCP", severity: "critical" as const },
   { key: "alarm_scp", label: "Short Circuit", severity: "critical" as const },
-  { key: "alarm_mos_otp", label: "MOS Over Temp", severity: "warning" as const },
+  
+  // Temperature protection
+  { key: "alarm_mos_otp", label: "MOS Over Temp", severity: "critical" as const },
   { key: "alarm_env_otp", label: "Env Over Temp", severity: "warning" as const },
-  { key: "alarm_env_utp", label: "Env Under Temp", severity: "warning" as const },
-  { key: "alarm_soc_low", label: "Low SOC", severity: "warning" as const },
+  { key: "alarm_dsg_otp", label: "Discharge OT", severity: "warning" as const },
+  { key: "alarm_chg_otp", label: "Charge OT", severity: "warning" as const },
+  
+  // Hardware faults (critical)
   { key: "alarm_cell_fault", label: "Cell Fault", severity: "critical" as const },
-  { key: "alarm_ntc_fault", label: "NTC Fault", severity: "warning" as const },
+  { key: "alarm_ntc_fault", label: "NTC Fault", severity: "critical" as const },
+  
+  // Warning level alarms
+  { key: "alarm_soc_low", label: "Low SOC", severity: "warning" as const },
+  { key: "alarm_battery_low", label: "Low Battery", severity: "warning" as const },
 ];
 
 // ============================================================================

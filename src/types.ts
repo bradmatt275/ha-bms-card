@@ -149,6 +149,15 @@ export interface EntityConfig {
   // Alarms
   /** Array of alarm configurations */
   alarms?: AlarmConfig[];
+  /** Override default alarm entity IDs */
+  alarm_overrides?: AlarmOverrides;
+}
+
+/**
+ * Override default alarm entity patterns
+ */
+export interface AlarmOverrides {
+  [key: string]: string;
 }
 
 /**

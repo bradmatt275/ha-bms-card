@@ -5,7 +5,7 @@
 
 A custom Lovelace card for displaying Battery Management System (BMS) data in Home Assistant. Works with any BMS that exposes sensors to Home Assistant (JK-BMS, Jakiper/Pylon, Daly, etc.).
 
-![HA BMS Card Screenshot](docs/examples/screenshots/bms-card-screenshot.png)
+![HA BMS Card Screenshot](docs/examples/screenshots/bms-card.png)
 
 ## Features
 

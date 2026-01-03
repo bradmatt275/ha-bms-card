@@ -1,54 +1,30 @@
-type: custom:<removed>
-title: Pack 1
-cellCount: 16
-cellColumns: 2
-cellLayout: bankMode
-tempSensorsCount: 4
-hasHeater: "0"
-entities:
-  balancing_current: ""
-  power: sensor.jakiper_pack_1_pack_1_battery_power
-  balance_trigger_voltage: ""
-  total_runtime_formatted: ""
-  charging: binary_sensor.jakiper_pack_1_pack_1_charge_mos
-  discharging: binary_sensor.jakiper_pack_1_pack_1_discharge_mos
-  balancer: ""
-  heater: binary_sensor.jakiper_pack_1_pack_1_heater
-  total_voltage: sensor.jakiper_pack_1_pack_1_battery_voltage
-  total_battery_capacity_setting: sensor.jakiper_pack_1_pack_1_battery_full_capacity
-  total_charging_cycle_capacity: ""
-  average_cell_voltage: ""
-  current: sensor.jakiper_pack_1_pack_1_battery_current
-  state_of_charge: sensor.jakiper_pack_1_pack_1_battery_soc
-  capacity_remaining: sensor.jakiper_pack_1_pack_1_remaining_capacity
-  charging_cycles: sensor.jakiper_pack_1_pack_1_cycle_count
-  power_tube_temperature: sensor.jakiper_pack_1_pack_1_mos_temp
-  min_voltage_cell: ""
-  max_voltage_cell: ""
-  errors: binary_sensor.jakiper_pack_1_pack_1_cell_ovp
-  cell_voltage_1: sensor.jakiper_pack_1_pack_1_cell_1_voltage
-  cell_voltage_2: sensor.jakiper_pack_1_pack_1_cell_2_voltage
-  cell_voltage_3: sensor.jakiper_pack_1_pack_1_cell_3_voltage
-  cell_voltage_4: sensor.jakiper_pack_1_pack_1_cell_4_voltage
-  cell_voltage_5: sensor.jakiper_pack_1_pack_1_cell_5_voltage
-  cell_voltage_6: sensor.jakiper_pack_1_pack_1_cell_6_voltage
-  cell_voltage_7: sensor.jakiper_pack_1_pack_1_cell_7_voltage
-  cell_voltage_8: sensor.jakiper_pack_1_pack_1_cell_8_voltage
-  cell_voltage_9: sensor.jakiper_pack_1_pack_1_cell_9_voltage
-  cell_voltage_10: sensor.jakiper_pack_1_pack_1_cell_10_voltage
-  cell_voltage_11: sensor.jakiper_pack_1_pack_1_cell_11_voltage
-  cell_voltage_12: sensor.jakiper_pack_1_pack_1_cell_12_voltage
-  cell_voltage_13: sensor.jakiper_pack_1_pack_1_cell_13_voltage
-  cell_voltage_14: sensor.jakiper_pack_1_pack_1_cell_14_voltage
-  cell_voltage_15: sensor.jakiper_pack_1_pack_1_cell_15_voltage
-  cell_voltage_16: sensor.jakiper_pack_1_pack_1_cell_16_voltage
-  temperature_sensor_1: sensor.jakiper_pack_1_pack_1_cell_temp_1_4
-  temperature_sensor_2: sensor.jakiper_pack_1_pack_1_cell_temp_5_8
-  temperature_sensor_3: sensor.jakiper_pack_1_pack_1_cell_temp_9_12
-  temperature_sensor_4: sensor.jakiper_pack_1_pack_1_cell_temp_13_16
-deltaVoltageUnit: mV
-layout: core-reactor
-cellColorMode: progress
-minCellVoltage: 2
-maxCellVoltage: 3
-cellOrientation: horizontal
+type: custom:ha-bms-card
+title: Battery Pack 5
+cells:
+  count: 16
+  columns: 2
+  layout: incremental
+  orientation: horizontal
+  columns_mobile: 2
+entity_pattern:
+  prefix: jakiper_pack_5_pack_5
+thresholds:
+  cell_min: 2.5
+  cell_low: 2.7
+  cell_high: 3.6
+  cell_max: 3.7
+  delta_warning: 20
+  delta_critical: 50
+temperature:
+  warning: 60
+  critical: 70
+display:
+  delta_unit: mV
+  show_power: true
+  show_temperatures: true
+  show_cycle_count: true
+  show_capacity: true
+  compact_mode: true
+grid_options:
+  rows: auto
+  columns: full

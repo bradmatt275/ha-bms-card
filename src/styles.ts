@@ -595,7 +595,7 @@ export const cellGridStyles = css`
     font-size: 8px;
     color: var(--bms-info);
     position: absolute;
-    left: 2px;
+    left: -10px;
     top: 50%;
     transform: translateY(-50%);
   }
@@ -610,7 +610,7 @@ export const cellGridStyles = css`
     font-size: 8px;
     color: var(--bms-warning);
     position: absolute;
-    left: 2px;
+    left: -10px;
     top: 50%;
     transform: translateY(-50%);
   }

@@ -324,6 +324,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
               .soc=${state.soc}
               .remaining=${state.capacityRemaining}
               .hasAlarm=${hasCriticalAlarm}
+              .entityId=${this._entityResolver.getEntity("soc") || ""}
             ></bms-soc-ring>
 
             <bms-status-indicator
@@ -343,11 +344,13 @@ export class HABMSCard extends LitElement implements LovelaceCard {
           <bms-cell-grid
             .cells=${state.cells}
             .columns=${config.cells.columns}
+            .columnsMobile=${config.cells.columns_mobile || 0}
             .layout=${config.cells.layout}
             .orientation=${config.cells.orientation}
             .thresholds=${config.thresholds}
             .minCellNumber=${state.minCellNumber}
             .maxCellNumber=${state.maxCellNumber}
+            .entityIds=${this._getCellVoltageEntityIds()}
           ></bms-cell-grid>
 
           <!-- Temperature Sensors -->
@@ -355,6 +358,18 @@ export class HABMSCard extends LitElement implements LovelaceCard {
         </div>
       </ha-card>
     `;
+  }
+
+  /**
+   * Get cell voltage entity IDs for click handling
+   */
+  private _getCellVoltageEntityIds(): string[] {
+    const cellCount = this._config.cells.count;
+    const entityIds: string[] = [];
+    for (let i = 1; i <= cellCount; i++) {
+      entityIds.push(this._entityResolver.getCellVoltageEntity(i) || "");
+    }
+    return entityIds;
   }
 
   /**
@@ -372,6 +387,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
             unit="V"
             size="large"
             .decimals=${2}
+            .entityId=${this._entityResolver.getEntity("voltage") || ""}
           ></bms-stat>
           <bms-stat
             label="Current"
@@ -379,6 +395,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
             unit="A"
             size="large"
             .decimals=${1}
+            .entityId=${this._entityResolver.getEntity("current") || ""}
           ></bms-stat>
         </div>
         ${config.display.show_power
@@ -388,6 +405,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 .value=${state.power}
                 unit="W"
                 .decimals=${0}
+                .entityId=${this._entityResolver.getEntity("power") || ""}
               ></bms-stat>
             `
           : nothing}
@@ -398,6 +416,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 .value=${state.capacityRemaining}
                 unit="Ah"
                 .decimals=${2}
+                .entityId=${this._entityResolver.getEntity("capacity_remaining") || ""}
               ></bms-stat>
             `
           : nothing}
@@ -427,6 +446,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
           .decimals=${1}
           .warning=${tempWarning && !tempCritical}
           .critical=${tempCritical}
+          .entityId=${this._entityResolver.getEntity("temp_mos") || ""}
         ></bms-stat>
         <bms-stat
           label="Delta"
@@ -435,6 +455,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
           .decimals=${config.display.delta_unit === "mV" ? 0 : 3}
           .warning=${deltaState === "warning"}
           .critical=${deltaState === "critical"}
+          .entityId=${this._entityResolver.getEntity("delta_voltage") || ""}
         ></bms-stat>
         ${config.display.show_cycle_count
           ? html`
@@ -442,6 +463,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 label="Cycles"
                 .value=${state.cycleCount}
                 .decimals=${0}
+                .entityId=${this._entityResolver.getEntity("cycle_count") || ""}
               ></bms-stat>
             `
           : nothing}

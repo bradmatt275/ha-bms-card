@@ -28,8 +28,10 @@ export interface BMSCardConfig extends LovelaceCardConfig {
 export interface CellConfig {
   /** Number of cells (4, 8, 16, 24, or 32) */
   count: number;
-  /** Number of columns for display (1-4) */
+  /** Number of columns for display (1-4) - used for desktop */
   columns: number;
+  /** Number of columns for mobile display (1-4) - optional, defaults to columns */
+  columns_mobile?: number;
   /** Layout mode: 'incremental' flows L-R, 'bank' splits columns */
   layout: "incremental" | "bank";
   /** Grid orientation */

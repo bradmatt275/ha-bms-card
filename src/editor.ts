@@ -274,14 +274,26 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
             @value-changed=${(e: CustomEvent) => this._updateCellConfig("count", Number(e.detail.value))}
           ></ha-selector>
         </div>
+      </div>
 
+      <div class="form-row">
         <div class="form-group">
-          <label>Columns</label>
+          <label>Columns (Desktop)</label>
           <ha-selector
             .hass=${this.hass}
             .selector=${{ select: { options: columnOptions, mode: "dropdown" } }}
             .value=${String(this._config.cells?.columns || 2)}
             @value-changed=${(e: CustomEvent) => this._updateCellConfig("columns", Number(e.detail.value))}
+          ></ha-selector>
+        </div>
+
+        <div class="form-group">
+          <label>Columns (Mobile)</label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ select: { options: columnOptions, mode: "dropdown" } }}
+            .value=${String(this._config.cells?.columns_mobile || this._config.cells?.columns || 2)}
+            @value-changed=${(e: CustomEvent) => this._updateCellConfig("columns_mobile", Number(e.detail.value))}
           ></ha-selector>
         </div>
       </div>

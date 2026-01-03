@@ -33,6 +33,7 @@ export class BMSStat extends LitElement {
   @property({ type: Boolean }) warning = false;
   @property({ type: Boolean }) critical = false;
   @property({ type: Number }) decimals = 2;
+  @property({ type: String }) entityId = "";
 
   static styles = css`
     :host {
@@ -48,6 +49,17 @@ export class BMSStat extends LitElement {
 
     .stat.large {
       flex: 1;
+    }
+
+    .stat.clickable {
+      cursor: pointer;
+      border-radius: 4px;
+      margin: -4px;
+      padding: 8px;
+    }
+
+    .stat.clickable:hover {
+      background: var(--secondary-background-color, rgba(255, 255, 255, 0.05));
     }
 
     .stat-label {
@@ -92,9 +104,13 @@ export class BMSStat extends LitElement {
   protected render() {
     const valueClass = this.critical ? "critical" : this.warning ? "warning" : "";
     const formattedValue = this._formatValue();
+    const isClickable = !!this.entityId;
 
     return html`
-      <div class="stat ${this.size}">
+      <div 
+        class="stat ${this.size} ${isClickable ? 'clickable' : ''}"
+        @click=${isClickable ? this._handleClick : undefined}
+      >
         <span class="stat-label">${this.label}</span>
         <div class="stat-value-container">
           <span class="stat-value ${valueClass}">${formattedValue}</span>
@@ -109,6 +125,18 @@ export class BMSStat extends LitElement {
       return "---";
     }
     return formatNumber(this.value, this.decimals);
+  }
+
+  private _handleClick(): void {
+    if (this.entityId) {
+      this.dispatchEvent(
+        new CustomEvent("hass-more-info", {
+          bubbles: true,
+          composed: true,
+          detail: { entityId: this.entityId },
+        })
+      );
+    }
   }
 }
 

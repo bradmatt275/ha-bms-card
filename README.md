@@ -2,7 +2,7 @@
 
 A custom Lovelace card for displaying Battery Management System (BMS) data in Home Assistant. Works with any BMS that exposes sensors to Home Assistant (JK-BMS, Jakiper/Pylon, Daly, etc.).
 
-![HA BMS Card Screenshot](docs/examples/screenshots/preview.png)
+![HA BMS Card Screenshot](docs/examples/screenshots/Screenshot%202026-01-03%20at%2011.42.52%20am.png)
 
 ## Features
 
@@ -179,6 +179,10 @@ npm run build
 # Watch mode for development
 npm run watch
 ```
+
+## Acknowledgements
+
+This project was inspired by [syssi/esphome-jk-bms](https://github.com/syssi/esphome-jk-bms).
 
 ## License
 

@@ -1,0 +1,6 @@
+{
+  "name": "HA BMS Card",
+  "render_readme": true,
+  "homeassistant": "2023.0.0",
+  "filename": "ha-bms-card.js"
+}

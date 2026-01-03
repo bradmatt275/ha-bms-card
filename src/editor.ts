@@ -127,9 +127,30 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       margin-top: 4px;
     }
 
-    ha-entity-picker {
+    ha-entity-picker,
+    ha-selector {
       display: block;
       width: 100%;
+    }
+
+    .cell-grid-overrides {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .cell-grid-overrides {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cell-override {
+      margin-bottom: 0;
+    }
+
+    .cell-override label {
+      font-size: 11px;
     }
   `;
 
@@ -465,7 +486,41 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       ${this._renderEntityField("charging", "Charging Status", ["binary_sensor", "switch"])}
       ${this._renderEntityField("discharging", "Discharging Status", ["binary_sensor", "switch"])}
       ${this._renderEntityField("balancing_active", "Balancing Active", ["binary_sensor"])}
+
+      <div class="section-header">Cell Voltage Overrides</div>
+      <div class="help-text" style="margin-bottom: 8px;">
+        Override individual cell voltage entities. Leave empty to use the pattern.
+      </div>
+      ${this._renderCellVoltageOverrides()}
     `;
+  }
+
+  /**
+   * Render cell voltage override fields based on cell count
+   */
+  private _renderCellVoltageOverrides(): TemplateResult {
+    const cellCount = this._config.cells?.count || 16;
+    const cellVoltages = this._config.entities?.cell_voltages;
+    
+    // Get existing values if it's an array
+    const existingValues: string[] = Array.isArray(cellVoltages) ? cellVoltages : [];
+
+    const cells = [];
+    for (let i = 0; i < cellCount; i++) {
+      cells.push(html`
+        <div class="form-group cell-override">
+          <label>Cell ${i + 1}</label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ entity: { domain: ["sensor"] } }}
+            .value=${existingValues[i] || ""}
+            @value-changed=${(e: CustomEvent) => this._updateCellVoltage(i, e.detail.value || "")}
+          ></ha-selector>
+        </div>
+      `);
+    }
+
+    return html`<div class="cell-grid-overrides">${cells}</div>`;
   }
 
   /**
@@ -477,13 +532,12 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
     return html`
       <div class="form-group">
         <label>${label}</label>
-        <ha-entity-picker
+        <ha-selector
           .hass=${this.hass}
+          .selector=${{ entity: { domain: domainFilter } }}
           .value=${typeof value === "string" ? value : ""}
-          .includeDomains=${domainFilter}
-          allow-custom-entity
           @value-changed=${(e: CustomEvent) => this._updateEntity(key, e.detail.value || "")}
-        ></ha-entity-picker>
+        ></ha-selector>
       </div>
     `;
   }
@@ -493,7 +547,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
   // ============================================================================
 
   /**
-   * Handle ha-select closed event
+   * Handle ha-select closed event - only update if value changed
    */
   private _handleSelectChange(
     e: Event,
@@ -501,14 +555,31 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
     key: string,
     isNumber = false
   ): void {
-    const target = e.target as HTMLSelectElement;
-    if (!target?.value) return;
+    const target = e.target as HTMLSelectElement & { value: string };
+    const newValue = target?.value;
+    
+    // Don't update if no value or if closing without selection
+    if (newValue === undefined || newValue === null || newValue === "") return;
 
-    let value: string | number = target.value;
+    // Get current value to compare
+    let currentValue: unknown;
+    if (section === "cells") {
+      currentValue = this._config.cells?.[key as keyof typeof this._config.cells];
+    } else if (section === "display") {
+      currentValue = this._config.display?.[key as keyof typeof this._config.display];
+    } else {
+      currentValue = this._config[key as keyof typeof this._config];
+    }
+
+    // Convert and compare
+    let value: string | number = newValue;
     if (isNumber) {
-      value = Number(value);
+      value = Number(newValue);
       if (isNaN(value)) return;
     }
+
+    // Only update if value actually changed
+    if (String(currentValue) === String(value)) return;
 
     if (section === "root") {
       this._updateConfig(key, value);
@@ -588,6 +659,39 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
     } else {
       delete (entities as Record<string, unknown>)[key];
     }
+    this._config = { ...this._config, entities };
+    this._fireConfigChanged();
+  }
+
+  private _updateCellVoltage(index: number, value: string): void {
+    const entities = { ...this._config.entities };
+    const cellCount = this._config.cells?.count || 16;
+    
+    // Get existing array or create new one
+    let cellVoltages: string[] = [];
+    if (Array.isArray(entities.cell_voltages)) {
+      cellVoltages = [...entities.cell_voltages];
+    } else {
+      // Initialize with empty strings
+      cellVoltages = new Array(cellCount).fill("");
+    }
+
+    // Ensure array is large enough
+    while (cellVoltages.length < cellCount) {
+      cellVoltages.push("");
+    }
+
+    // Update the specific cell
+    cellVoltages[index] = value;
+
+    // Check if all values are empty - if so, remove the array entirely
+    const hasAnyValue = cellVoltages.some(v => v && v.length > 0);
+    if (hasAnyValue) {
+      entities.cell_voltages = cellVoltages;
+    } else {
+      delete entities.cell_voltages;
+    }
+
     this._config = { ...this._config, entities };
     this._fireConfigChanged();
   }

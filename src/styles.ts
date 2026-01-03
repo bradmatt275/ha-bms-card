@@ -62,11 +62,7 @@ export const cardStyles = css`
 
   :host {
     display: block;
-    /* Dynamic width based on column count */
-    --bms-base-width: 380px;
-    --bms-column-width: 120px;
-    --bms-columns: 2;
-    max-width: calc(var(--bms-base-width) + (var(--bms-columns) - 2) * var(--bms-column-width));
+    width: 100%;
   }
 
   ha-card {
@@ -76,6 +72,7 @@ export const cardStyles = css`
     color: var(--primary-text-color);
     box-sizing: border-box;
     overflow: hidden;
+    width: 100%;
   }
 
   ha-card.compact {
@@ -504,11 +501,13 @@ export const cellGridStyles = css`
 
   :host {
     display: block;
+    width: 100%;
   }
 
   .cell-grid {
     display: grid;
     gap: 4px;
+    width: 100%;
   }
 
   .cell-item {
@@ -541,18 +540,17 @@ export const cellGridStyles = css`
     font-family: var(--paper-font-common-code_-_font-family, monospace);
     margin-left: 8px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .cell-bar {
-    width: 50px;
+    flex: 1;
+    min-width: 40px;
+    max-width: 80px;
     height: 5px;
     background: var(--divider-color, rgba(255, 255, 255, 0.1));
     border-radius: 3px;
     overflow: hidden;
     margin-left: 6px;
-    flex-shrink: 0;
   }
 
   .cell-bar-fill {

@@ -253,54 +253,74 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
    * Render cells configuration tab
    */
   private _renderCellsTab(): TemplateResult {
+    const cellCountOptions = SUPPORTED_CELL_COUNTS.map((count) => ({
+      value: String(count),
+      label: `${count}s`,
+    }));
+
+    const columnOptions = SUPPORTED_COLUMN_COUNTS.map((count) => ({
+      value: String(count),
+      label: String(count),
+    }));
+
     return html`
       <div class="form-row">
         <div class="form-group">
           <label>Cell Count</label>
-          <ha-select
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ select: { options: cellCountOptions, mode: "dropdown" } }}
             .value=${String(this._config.cells?.count || 16)}
-            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "count", true)}
-          >
-            ${SUPPORTED_CELL_COUNTS.map(
-              (count) => html`<mwc-list-item .value=${String(count)}>${count}s</mwc-list-item>`
-            )}
-          </ha-select>
+            @value-changed=${(e: CustomEvent) => this._updateCellConfig("count", Number(e.detail.value))}
+          ></ha-selector>
         </div>
 
         <div class="form-group">
           <label>Columns</label>
-          <ha-select
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ select: { options: columnOptions, mode: "dropdown" } }}
             .value=${String(this._config.cells?.columns || 2)}
-            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "columns", true)}
-          >
-            ${SUPPORTED_COLUMN_COUNTS.map(
-              (count) => html`<mwc-list-item .value=${String(count)}>${count}</mwc-list-item>`
-            )}
-          </ha-select>
+            @value-changed=${(e: CustomEvent) => this._updateCellConfig("columns", Number(e.detail.value))}
+          ></ha-selector>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Layout Mode</label>
-          <ha-select
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{
+              select: {
+                options: [
+                  { value: "bank", label: "Bank (split columns)" },
+                  { value: "incremental", label: "Incremental (L-R, T-B)" },
+                ],
+                mode: "dropdown",
+              },
+            }}
             .value=${this._config.cells?.layout || "bank"}
-            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "layout")}
-          >
-            <mwc-list-item value="bank">Bank (split columns)</mwc-list-item>
-            <mwc-list-item value="incremental">Incremental (L-R, T-B)</mwc-list-item>
-          </ha-select>
+            @value-changed=${(e: CustomEvent) => this._updateCellConfig("layout", e.detail.value)}
+          ></ha-selector>
         </div>
 
         <div class="form-group">
           <label>Orientation</label>
-          <ha-select
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{
+              select: {
+                options: [
+                  { value: "horizontal", label: "Horizontal" },
+                  { value: "vertical", label: "Vertical" },
+                ],
+                mode: "dropdown",
+              },
+            }}
             .value=${this._config.cells?.orientation || "horizontal"}
-            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "orientation")}
-          >
-            <mwc-list-item value="horizontal">Horizontal</mwc-list-item>
-            <mwc-list-item value="vertical">Vertical</mwc-list-item>
-          </ha-select>
+            @value-changed=${(e: CustomEvent) => this._updateCellConfig("orientation", e.detail.value)}
+          ></ha-selector>
         </div>
       </div>
     `;
@@ -407,13 +427,20 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
     return html`
       <div class="form-group">
         <label>Delta Voltage Unit</label>
-        <ha-select
+        <ha-selector
+          .hass=${this.hass}
+          .selector=${{
+            select: {
+              options: [
+                { value: "mV", label: "Millivolts (mV)" },
+                { value: "V", label: "Volts (V)" },
+              ],
+              mode: "dropdown",
+            },
+          }}
           .value=${this._config.display?.delta_unit || "mV"}
-          @closed=${(e: Event) => this._handleSelectChange(e, "display", "delta_unit")}
-        >
-          <mwc-list-item value="mV">Millivolts (mV)</mwc-list-item>
-          <mwc-list-item value="V">Volts (V)</mwc-list-item>
-        </ha-select>
+          @value-changed=${(e: CustomEvent) => this._updateDisplay("delta_unit", e.detail.value)}
+        ></ha-selector>
       </div>
 
       <div class="switch-row">
@@ -545,50 +572,6 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
   // ============================================================================
   // Config Update Methods
   // ============================================================================
-
-  /**
-   * Handle ha-select closed event - only update if value changed
-   */
-  private _handleSelectChange(
-    e: Event,
-    section: "cells" | "display" | "root",
-    key: string,
-    isNumber = false
-  ): void {
-    const target = e.target as HTMLSelectElement & { value: string };
-    const newValue = target?.value;
-    
-    // Don't update if no value or if closing without selection
-    if (newValue === undefined || newValue === null || newValue === "") return;
-
-    // Get current value to compare
-    let currentValue: unknown;
-    if (section === "cells") {
-      currentValue = this._config.cells?.[key as keyof typeof this._config.cells];
-    } else if (section === "display") {
-      currentValue = this._config.display?.[key as keyof typeof this._config.display];
-    } else {
-      currentValue = this._config[key as keyof typeof this._config];
-    }
-
-    // Convert and compare
-    let value: string | number = newValue;
-    if (isNumber) {
-      value = Number(newValue);
-      if (isNaN(value)) return;
-    }
-
-    // Only update if value actually changed
-    if (String(currentValue) === String(value)) return;
-
-    if (section === "root") {
-      this._updateConfig(key, value);
-    } else if (section === "cells") {
-      this._updateCellConfig(key, value);
-    } else if (section === "display") {
-      this._updateDisplay(key, value);
-    }
-  }
 
   private _updateConfig(key: string, value: unknown): void {
     this._config = { ...this._config, [key]: value };

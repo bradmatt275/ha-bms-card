@@ -44,6 +44,7 @@ export class BMSStat extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 2px;
+      margin: -4px;
       padding: 8px;
     }
 
@@ -54,8 +55,7 @@ export class BMSStat extends LitElement {
     .stat.clickable {
       cursor: pointer;
       border-radius: 4px;
-      margin: -4px;
-      padding: 8px;
+ 
     }
 
     .stat.clickable:hover {
@@ -79,10 +79,6 @@ export class BMSStat extends LitElement {
       font-weight: 500;
       color: var(--primary-text-color);
       font-family: var(--paper-font-common-code_-_font-family, monospace);
-    }
-
-    .stat.large .stat-value {
-      font-size: 20px;
     }
 
     .stat-value.warning {

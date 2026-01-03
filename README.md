@@ -1,5 +1,8 @@
 # HA BMS Card for Home Assistant
 
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://github.com/hacs/integration)
+[![GitHub Release](https://img.shields.io/github/v/release/bradmatt275/ha-bms-card)](https://github.com/bradmatt275/ha-bms-card/releases)
+
 A custom Lovelace card for displaying Battery Management System (BMS) data in Home Assistant. Works with any BMS that exposes sensors to Home Assistant (JK-BMS, Jakiper/Pylon, Daly, etc.).
 
 ![HA BMS Card Screenshot](docs/examples/screenshots/bms-card-screenshot.png)
@@ -22,6 +25,7 @@ A custom Lovelace card for displaying Battery Management System (BMS) data in Ho
 ## Installation
 
 ### HACS (Recommended)
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=bradmatt275&repository=ha-bms-card&category=integration)
 
 1. Open HACS in your Home Assistant instance
 2. Go to "Frontend" section

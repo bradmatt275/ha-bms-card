@@ -38,6 +38,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       display: flex;
       border-bottom: 1px solid var(--divider-color);
       margin-bottom: 16px;
+      flex-wrap: wrap;
     }
 
     .tab {
@@ -46,6 +47,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       border-bottom: 2px solid transparent;
       transition: border-color 0.2s, color 0.2s;
       color: var(--secondary-text-color);
+      font-size: 14px;
     }
 
     .tab:hover {
@@ -74,12 +76,19 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       font-weight: 500;
       color: var(--secondary-text-color);
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+    }
+
+    @media (max-width: 450px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
     }
 
     ha-textfield,
@@ -108,12 +117,19 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       margin-top: 12px;
       margin-bottom: 8px;
       color: var(--primary-text-color);
+      border-bottom: 1px solid var(--divider-color);
+      padding-bottom: 4px;
     }
 
     .help-text {
       font-size: 12px;
       color: var(--secondary-text-color);
       margin-top: 4px;
+    }
+
+    ha-entity-picker {
+      display: block;
+      width: 100%;
     }
   `;
 
@@ -222,7 +238,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           <label>Cell Count</label>
           <ha-select
             .value=${String(this._config.cells?.count || 16)}
-            @selected=${(e: CustomEvent) => this._updateCellConfig("count", Number(e.detail.value))}
+            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "count", true)}
           >
             ${SUPPORTED_CELL_COUNTS.map(
               (count) => html`<mwc-list-item .value=${String(count)}>${count}s</mwc-list-item>`
@@ -234,7 +250,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           <label>Columns</label>
           <ha-select
             .value=${String(this._config.cells?.columns || 2)}
-            @selected=${(e: CustomEvent) => this._updateCellConfig("columns", Number(e.detail.value))}
+            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "columns", true)}
           >
             ${SUPPORTED_COLUMN_COUNTS.map(
               (count) => html`<mwc-list-item .value=${String(count)}>${count}</mwc-list-item>`
@@ -248,7 +264,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           <label>Layout Mode</label>
           <ha-select
             .value=${this._config.cells?.layout || "bank"}
-            @selected=${(e: CustomEvent) => this._updateCellConfig("layout", e.detail.value)}
+            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "layout")}
           >
             <mwc-list-item value="bank">Bank (split columns)</mwc-list-item>
             <mwc-list-item value="incremental">Incremental (L-R, T-B)</mwc-list-item>
@@ -259,7 +275,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           <label>Orientation</label>
           <ha-select
             .value=${this._config.cells?.orientation || "horizontal"}
-            @selected=${(e: CustomEvent) => this._updateCellConfig("orientation", e.detail.value)}
+            @closed=${(e: Event) => this._handleSelectChange(e, "cells", "orientation")}
           >
             <mwc-list-item value="horizontal">Horizontal</mwc-list-item>
             <mwc-list-item value="vertical">Vertical</mwc-list-item>
@@ -372,7 +388,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
         <label>Delta Voltage Unit</label>
         <ha-select
           .value=${this._config.display?.delta_unit || "mV"}
-          @selected=${(e: CustomEvent) => this._updateDisplay("delta_unit", e.detail.value)}
+          @closed=${(e: Event) => this._handleSelectChange(e, "display", "delta_unit")}
         >
           <mwc-list-item value="mV">Millivolts (mV)</mwc-list-item>
           <mwc-list-item value="V">Volts (V)</mwc-list-item>
@@ -431,41 +447,43 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       </div>
 
       <div class="section-header">Core Sensors</div>
-      ${this._renderEntityField("soc", "State of Charge")}
-      ${this._renderEntityField("voltage", "Voltage")}
-      ${this._renderEntityField("current", "Current")}
-      ${this._renderEntityField("power", "Power (optional)")}
+      ${this._renderEntityField("soc", "State of Charge", ["sensor"])}
+      ${this._renderEntityField("voltage", "Voltage", ["sensor"])}
+      ${this._renderEntityField("current", "Current", ["sensor"])}
+      ${this._renderEntityField("power", "Power (optional)", ["sensor"])}
 
       <div class="section-header">Capacity</div>
-      ${this._renderEntityField("capacity_remaining", "Remaining Capacity")}
-      ${this._renderEntityField("capacity_full", "Full Capacity")}
-      ${this._renderEntityField("cycle_count", "Cycle Count")}
+      ${this._renderEntityField("capacity_remaining", "Remaining Capacity", ["sensor"])}
+      ${this._renderEntityField("capacity_full", "Full Capacity", ["sensor"])}
+      ${this._renderEntityField("cycle_count", "Cycle Count", ["sensor"])}
 
       <div class="section-header">Temperature</div>
-      ${this._renderEntityField("temp_mos", "MOS Temperature")}
-      ${this._renderEntityField("temp_env", "Environment Temperature")}
+      ${this._renderEntityField("temp_mos", "MOS Temperature", ["sensor"])}
+      ${this._renderEntityField("temp_env", "Environment Temperature", ["sensor"])}
 
       <div class="section-header">Status</div>
-      ${this._renderEntityField("charging", "Charging Status")}
-      ${this._renderEntityField("discharging", "Discharging Status")}
-      ${this._renderEntityField("balancing_active", "Balancing Active")}
+      ${this._renderEntityField("charging", "Charging Status", ["binary_sensor", "switch"])}
+      ${this._renderEntityField("discharging", "Discharging Status", ["binary_sensor", "switch"])}
+      ${this._renderEntityField("balancing_active", "Balancing Active", ["binary_sensor"])}
     `;
   }
 
   /**
-   * Render an entity field
+   * Render an entity field using ha-entity-picker for better UX
    */
-  private _renderEntityField(key: string, label: string): TemplateResult {
+  private _renderEntityField(key: string, label: string, domainFilter?: string[]): TemplateResult {
     const value = this._config.entities?.[key as keyof typeof this._config.entities] || "";
     
     return html`
       <div class="form-group">
         <label>${label}</label>
-        <ha-textfield
+        <ha-entity-picker
+          .hass=${this.hass}
           .value=${typeof value === "string" ? value : ""}
-          .placeholder=${"sensor.pack_1_..."}
-          @input=${(e: Event) => this._updateEntity(key, (e.target as HTMLInputElement).value)}
-        ></ha-textfield>
+          .includeDomains=${domainFilter}
+          allow-custom-entity
+          @value-changed=${(e: CustomEvent) => this._updateEntity(key, e.detail.value || "")}
+        ></ha-entity-picker>
       </div>
     `;
   }
@@ -473,6 +491,33 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
   // ============================================================================
   // Config Update Methods
   // ============================================================================
+
+  /**
+   * Handle ha-select closed event
+   */
+  private _handleSelectChange(
+    e: Event,
+    section: "cells" | "display" | "root",
+    key: string,
+    isNumber = false
+  ): void {
+    const target = e.target as HTMLSelectElement;
+    if (!target?.value) return;
+
+    let value: string | number = target.value;
+    if (isNumber) {
+      value = Number(value);
+      if (isNaN(value)) return;
+    }
+
+    if (section === "root") {
+      this._updateConfig(key, value);
+    } else if (section === "cells") {
+      this._updateCellConfig(key, value);
+    } else if (section === "display") {
+      this._updateDisplay(key, value);
+    }
+  }
 
   private _updateConfig(key: string, value: unknown): void {
     this._config = { ...this._config, [key]: value };

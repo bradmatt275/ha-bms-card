@@ -28,6 +28,9 @@ import "./components/cell-grid";
 import "./components/alert-badge";
 import "./components/temp-bar";
 
+// Import editor for visual configuration
+import "./editor";
+
 // Card registration info for HA
 const cardInfo = {
   type: CARD_INFO.type,

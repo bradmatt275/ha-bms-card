@@ -521,6 +521,7 @@ export const cellGridStyles = css`
     transition: background-color var(--bms-transition-duration) ease;
     min-width: 0;
     row-gap: 4px;
+    position: relative;
   }
 
   .cell-number {
@@ -593,7 +594,10 @@ export const cellGridStyles = css`
     content: "▼";
     font-size: 8px;
     color: var(--bms-info);
-    margin-right: 4px;
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .cell-item.is-max .cell-voltage {
@@ -605,7 +609,10 @@ export const cellGridStyles = css`
     content: "▲";
     font-size: 8px;
     color: var(--bms-warning);
-    margin-right: 4px;
+    position: absolute;
+    left: 2px;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   /* Voltage state colors */

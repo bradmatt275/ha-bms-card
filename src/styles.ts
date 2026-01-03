@@ -585,34 +585,22 @@ export const cellGridStyles = css`
   }
 
   /* Min/Max highlighting */
+  .cell-item.is-min {
+    border-left: 3px solid var(--bms-info);
+  }
+
   .cell-item.is-min .cell-voltage {
     color: var(--bms-info);
     font-weight: 500;
   }
 
-  .cell-item.is-min::before {
-    content: "▼";
-    font-size: 8px;
-    color: var(--bms-info);
-    position: absolute;
-    left: -10px;
-    top: 50%;
-    transform: translateY(-50%);
+  .cell-item.is-max {
+    border-left: 3px solid var(--bms-warning);
   }
 
   .cell-item.is-max .cell-voltage {
     color: var(--bms-warning);
     font-weight: 500;
-  }
-
-  .cell-item.is-max::before {
-    content: "▲";
-    font-size: 8px;
-    color: var(--bms-warning);
-    position: absolute;
-    left: -10px;
-    top: 50%;
-    transform: translateY(-50%);
   }
 
   /* Voltage state colors */

@@ -62,9 +62,9 @@ export const cardStyles = css`
 
   :host {
     display: block;
-    /* Dynamic width based on column count - can be overridden by parent */
-    --bms-base-width: 320px;
-    --bms-column-width: 85px;
+    /* Dynamic width based on column count */
+    --bms-base-width: 380px;
+    --bms-column-width: 120px;
     --bms-columns: 2;
     max-width: calc(var(--bms-base-width) + (var(--bms-columns) - 2) * var(--bms-column-width));
   }

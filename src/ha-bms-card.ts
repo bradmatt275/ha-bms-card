@@ -220,6 +220,12 @@ export class HABMSCard extends LitElement implements LovelaceCard {
     // Get active alarms
     const activeAlarms = this._getActiveAlarms();
 
+    // Determine actual power flow from current
+    // Positive current = charging, Negative current = discharging
+    // MOS states indicate if charge/discharge is *enabled*, not actual flow
+    const isActuallyCharging = current !== null && current > 0;
+    const isActuallyDischarging = current !== null && current < 0;
+
     // Update state
     this._state = {
       soc: resolver.getNumericState(this.hass, resolver.getEntity("soc")),
@@ -248,11 +254,8 @@ export class HABMSCard extends LitElement implements LovelaceCard {
       averageCellVoltage,
       minCellNumber,
       maxCellNumber,
-      isCharging: resolver.getBinaryState(this.hass, resolver.getEntity("charging")),
-      isDischarging: resolver.getBinaryState(
-        this.hass,
-        resolver.getEntity("discharging")
-      ),
+      isCharging: isActuallyCharging,
+      isDischarging: isActuallyDischarging,
       isBalancing: resolver.getBinaryState(
         this.hass,
         resolver.getEntity("balancing_active")

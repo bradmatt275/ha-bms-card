@@ -512,6 +512,7 @@ export const cellGridStyles = css`
 
   .cell-item {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     padding: 6px 8px;
     background: var(--ha-card-background, var(--card-background-color));
@@ -519,6 +520,7 @@ export const cellGridStyles = css`
     border: 1px solid var(--divider-color, rgba(255, 255, 255, 0.1));
     transition: background-color var(--bms-transition-duration) ease;
     min-width: 0;
+    row-gap: 4px;
   }
 
   .cell-number {
@@ -535,15 +537,15 @@ export const cellGridStyles = css`
   }
 
   .cell-voltage {
-    flex: 1;
     font-size: 13px;
     font-family: var(--paper-font-common-code_-_font-family, monospace);
     margin-left: 8px;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .cell-bar {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 40px;
     max-width: 80px;
     height: 5px;
@@ -551,6 +553,15 @@ export const cellGridStyles = css`
     border-radius: 3px;
     overflow: hidden;
     margin-left: 6px;
+  }
+
+  /* When wrapped, bar takes full width */
+  @media (max-width: 500px) {
+    .cell-bar {
+      flex-basis: 100%;
+      max-width: none;
+      margin-left: 0;
+    }
   }
 
   .cell-bar-fill {

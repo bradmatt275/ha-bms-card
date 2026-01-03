@@ -196,9 +196,15 @@ export class HABMSCard extends LitElement implements LovelaceCard {
         averageCellVoltage = voltages.reduce((a, b) => a + b, 0) / voltages.length;
       }
 
-      // Find min/max cell numbers
-      minCellNumber = cells.find((c) => c.voltage === minVoltage)?.number ?? null;
-      maxCellNumber = cells.find((c) => c.voltage === maxVoltage)?.number ?? null;
+      // Find min/max cell numbers (only if there's actually a difference)
+      // Don't show indicator if multiple cells share the same min/max voltage (ties)
+      if (minVoltage !== maxVoltage) {
+        const minCells = cells.filter((c) => c.voltage === minVoltage);
+        const maxCells = cells.filter((c) => c.voltage === maxVoltage);
+        
+        minCellNumber = minCells.length === 1 ? minCells[0].number : null;
+        maxCellNumber = maxCells.length === 1 ? maxCells[0].number : null;
+      }
     }
 
     // Get power - use sensor if available, otherwise calculate

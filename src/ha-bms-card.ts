@@ -396,6 +396,10 @@ export class HABMSCard extends LitElement implements LovelaceCard {
    */
   private _renderPrimaryStats(): TemplateResult {
     const { _config: config, _state: state } = this;
+    const deltaState = evaluateDeltaState(state.deltaVoltage, config.thresholds);
+    const deltaValue = config.display.delta_unit === "mV"
+      ? state.deltaVoltage !== null ? state.deltaVoltage * 1000 : null
+      : state.deltaVoltage;
 
     return html`
       <bms-stat-card class="stats-primary">
@@ -428,17 +432,15 @@ export class HABMSCard extends LitElement implements LovelaceCard {
               ></bms-stat>
             `
           : nothing}
-        ${config.display.show_capacity
-          ? html`
-              <bms-stat
-                label="Capacity"
-                .value=${state.capacityRemaining}
-                unit="Ah"
-                .decimals=${2}
-                .entityId=${this._getClickableEntityId("capacity_remaining")}
-              ></bms-stat>
-            `
-          : nothing}
+        <bms-stat
+          label="Delta"
+          .value=${deltaValue}
+          unit=${config.display.delta_unit}
+          .decimals=${config.display.delta_unit === "mV" ? 0 : 3}
+          .warning=${deltaState === "warning"}
+          .critical=${deltaState === "critical"}
+          .entityId=${this._getClickableEntityId("delta_voltage")}
+        ></bms-stat>
       </bms-stat-card>
     `;
   }
@@ -448,10 +450,6 @@ export class HABMSCard extends LitElement implements LovelaceCard {
    */
   private _renderSecondaryStats(): TemplateResult {
     const { _config: config, _state: state } = this;
-    const deltaState = evaluateDeltaState(state.deltaVoltage, config.thresholds);
-    const deltaValue = config.display.delta_unit === "mV"
-      ? state.deltaVoltage !== null ? state.deltaVoltage * 1000 : null
-      : state.deltaVoltage;
 
     const tempWarning = state.tempMos !== null && state.tempMos >= config.temperature.warning;
     const tempCritical = state.tempMos !== null && state.tempMos >= config.temperature.critical;
@@ -467,15 +465,6 @@ export class HABMSCard extends LitElement implements LovelaceCard {
           .critical=${tempCritical}
           .entityId=${this._getClickableEntityId("temp_mos")}
         ></bms-stat>
-        <bms-stat
-          label="Delta"
-          .value=${deltaValue}
-          unit=${config.display.delta_unit}
-          .decimals=${config.display.delta_unit === "mV" ? 0 : 3}
-          .warning=${deltaState === "warning"}
-          .critical=${deltaState === "critical"}
-          .entityId=${this._getClickableEntityId("delta_voltage")}
-        ></bms-stat>
         ${config.display.show_cycle_count
           ? html`
               <bms-stat
@@ -483,6 +472,28 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 .value=${state.cycleCount}
                 .decimals=${0}
                 .entityId=${this._getClickableEntityId("cycle_count")}
+              ></bms-stat>
+            `
+          : nothing}
+        ${config.display.show_capacity
+          ? html`
+              <bms-stat
+                label="Remaining Capacity"
+                .value=${state.capacityRemaining}
+                unit="Ah"
+                .decimals=${2}
+                .entityId=${this._getClickableEntityId("capacity_remaining")}
+              ></bms-stat>
+            `
+          : nothing}
+        ${config.display.show_capacity
+          ? html`
+              <bms-stat
+                label="Full Capacity"
+                .value=${state.capacityFull}
+                unit="Ah"
+                .decimals=${2}
+                .entityId=${this._getClickableEntityId("capacity_full")}
               ></bms-stat>
             `
           : nothing}

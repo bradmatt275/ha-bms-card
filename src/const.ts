@@ -10,6 +10,7 @@ import {
   TemperatureConfig,
   DisplayConfig,
   DefaultTemplates,
+  AlarmConfig,
 } from "./types";
 
 // ============================================================================
@@ -97,6 +98,62 @@ export const DEFAULT_TEMPLATES: DefaultTemplates = {
   alarm_battery_low: "binary_sensor.{prefix}_battery_low_power",
 };
 
+/**
+ * YamBMS entity templates using {prefix} placeholder
+ * These match the YamBMS / BMS_BLE integration naming conventions
+ */
+export const YAMBMS_TEMPLATES: DefaultTemplates = {
+  // Sensors
+  soc: "sensor.{prefix}_battery_soc",
+  voltage: "sensor.{prefix}_total_voltage",
+  current: "sensor.{prefix}_current",
+  power: "sensor.{prefix}_power",
+  capacity_remaining: "sensor.{prefix}_battery_capacity_remaining",
+  capacity_full: "sensor.{prefix}_full_capacity",
+  cycle_count: "sensor.{prefix}_charging_cycles",
+
+  // Health and status
+  soh: "sensor.{prefix}_state_of_health",
+  status: "sensor.{prefix}_status",
+
+  // Derived values (optional - card calculates if not present)
+  delta_voltage: "sensor.{prefix}_delta_cell_voltage",
+  average_cell_voltage: "sensor.{prefix}_average_cell_voltage",
+  min_cell_voltage: "sensor.{prefix}_min_cell_voltage",
+  max_cell_voltage: "sensor.{prefix}_max_cell_voltage",
+
+  // Temperatures
+  temp_mos: "sensor.{prefix}_mosfet_temperature",
+  temp_env: "sensor.{prefix}_environment_temperature",
+  min_temp: "sensor.{prefix}_min_temperature",
+  max_temp: "sensor.{prefix}_max_temperature",
+  temp_cell_pattern: "sensor.{prefix}_battery_temperature_{n}",
+
+  // Cell voltages
+  cell_voltage_pattern: "sensor.{prefix}_cell_voltage_{n}",
+
+  // Cell balancing
+  cell_balancing_pattern: "binary_sensor.{prefix}_cell_balancing_{n}",
+
+  // Binary sensors
+  charging: "binary_sensor.{prefix}_charging",
+  discharging: "binary_sensor.{prefix}_discharging",
+  balancing_active: "binary_sensor.{prefix}_equalizing",
+
+  // Aggregate alarm sensors (text-based)
+  alarm_warnings: "sensor.{prefix}_warnings",
+  alarm_protections: "sensor.{prefix}_protections",
+  alarm_faults: "sensor.{prefix}_faults",
+};
+
+/**
+ * Template presets keyed by integration name
+ */
+export const TEMPLATE_PRESETS: Record<string, DefaultTemplates> = {
+  default: DEFAULT_TEMPLATES,
+  yambms: YAMBMS_TEMPLATES,
+};
+
 // ============================================================================
 // Default Alarms
 // ============================================================================
@@ -128,6 +185,31 @@ export const DEFAULT_ALARMS = [
   // Warning level alarms
   { key: "alarm_soc_low", label: "Low SOC", severity: "warning" as const },
   { key: "alarm_battery_low", label: "Low Battery", severity: "warning" as const },
+];
+
+/**
+ * Default alarm configurations for YamBMS integration
+ * Uses aggregate text sensors instead of individual binary sensors
+ */
+export const YAMBMS_DEFAULT_ALARMS: AlarmConfig[] = [
+  {
+    entity: "sensor.{prefix}_warnings",
+    label: "Warnings",
+    severity: "warning" as const,
+    type: "text" as const,
+  },
+  {
+    entity: "sensor.{prefix}_protections",
+    label: "Protections",
+    severity: "critical" as const,
+    type: "text" as const,
+  },
+  {
+    entity: "sensor.{prefix}_faults",
+    label: "Faults",
+    severity: "critical" as const,
+    type: "text" as const,
+  },
 ];
 
 // ============================================================================
@@ -173,7 +255,17 @@ export const DEFAULT_DISPLAY_CONFIG: DisplayConfig = {
   show_temperatures: true,
   show_cycle_count: true,
   show_capacity: true,
+  show_soh: false,
+  show_status: false,
   compact_mode: false,
+};
+
+/**
+ * Default temperature sensor count per integration
+ */
+export const DEFAULT_TEMP_SENSOR_COUNT: Record<string, number> = {
+  default: 4,
+  yambms: 4,
 };
 
 // ============================================================================

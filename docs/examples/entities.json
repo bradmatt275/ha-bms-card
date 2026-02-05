@@ -1,0 +1,1343 @@
+[
+  {
+    "entity_id": "binary_sensor.jakiper_2_can_be_combined",
+    "state": "on",
+    "attributes": {
+      "friendly_name": "Jakiper 2 Can be combined"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_equalizing",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 equalizing"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_online_status",
+    "state": "on",
+    "attributes": {
+      "friendly_name": "Jakiper 2 online status"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_charging_operation",
+    "state": "on",
+    "attributes": {
+      "friendly_name": "Jakiper 2 charging operation"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_discharging_operation",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 discharging operation"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_charging",
+    "state": "on",
+    "attributes": {
+      "friendly_name": "Jakiper 2 charging"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_discharging",
+    "state": "on",
+    "attributes": {
+      "friendly_name": "Jakiper 2 discharging"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_1",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 1"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_2",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 2"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_3",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 3"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_4",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 4"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_5",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 5"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_6",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 6"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_7",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 7"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_8",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 8"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_9",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 9"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_10",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 10"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_11",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 11"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_12",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 12"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_13",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 13"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_14",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 14"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_15",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 15"
+    }
+  },
+  {
+    "entity_id": "binary_sensor.jakiper_2_cell_balancing_16",
+    "state": "off",
+    "attributes": {
+      "friendly_name": "Jakiper 2 cell balancing 16"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_balancer_trigger_voltage",
+    "state": "3.30000019073486",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage",
+      "friendly_name": "Jakiper 2 balancer trigger voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_soc",
+    "state": "30.0",
+    "attributes": {
+      "unit_of_measurement": "%",
+      "device_class": "battery",
+      "friendly_name": "Jakiper 2 Battery SoC"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_capacity_remaining",
+    "state": "29.8599987030029",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "Ah",
+      "icon": "mdi:car-battery",
+      "friendly_name": "Jakiper 2 Battery Capacity Remaining"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_charging_cycles",
+    "state": "330.0",
+    "attributes": {
+      "state_class": "total",
+      "icon": "mdi:counter",
+      "friendly_name": "Jakiper 2 charging cycles"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_total_charging_cycle_capacity",
+    "state": "31828.498046875",
+    "attributes": {
+      "state_class": "total",
+      "unit_of_measurement": "Ah",
+      "icon": "mdi:car-battery",
+      "friendly_name": "Jakiper 2 total charging cycle capacity"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_daily_charging_energy",
+    "state": "5.41512441635132",
+    "attributes": {
+      "state_class": "total_increasing",
+      "unit_of_measurement": "kWh",
+      "device_class": "energy",
+      "friendly_name": "Jakiper 2 Daily Charging Energy"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_daily_discharging_energy",
+    "state": "7.49167919158936",
+    "attributes": {
+      "state_class": "total_increasing",
+      "unit_of_measurement": "kWh",
+      "device_class": "energy",
+      "friendly_name": "Jakiper 2 Daily Discharging Energy"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_min_temperature",
+    "state": "25.1000003814697",
+    "attributes": {
+      "unit_of_measurement": "°C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 min temperature"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_min_temperature_sensor",
+    "state": "203.0",
+    "attributes": {
+      "icon": "mdi:numeric",
+      "friendly_name": "Jakiper 2 min temperature sensor"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_max_temperature",
+    "state": "25.5",
+    "attributes": {
+      "unit_of_measurement": "°C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 max temperature"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_max_temperature_sensor",
+    "state": "201.0",
+    "attributes": {
+      "icon": "mdi:numeric",
+      "friendly_name": "Jakiper 2 max temperature sensor"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_current",
+    "state": "10.4899997711182",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "A",
+      "device_class": "current",
+      "friendly_name": "Jakiper 2 current"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_total_voltage",
+    "state": "53.1100006103516",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage",
+      "friendly_name": "Jakiper 2 total voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_power",
+    "state": "557.123901367188",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "W",
+      "device_class": "power",
+      "friendly_name": "Jakiper 2 power"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_state_of_health",
+    "state": "96.0",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "%",
+      "friendly_name": "Jakiper 2 state of health"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_full_capacity",
+    "state": "96.4499969482422",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "Ah",
+      "friendly_name": "Jakiper 2 full capacity"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_design_capacity",
+    "state": "100.0",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "Ah",
+      "friendly_name": "Jakiper 2 design capacity"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_warnings_bitmask",
+    "state": "0.0",
+    "attributes": {
+      "state_class": "measurement",
+      "friendly_name": "Jakiper 2 warnings bitmask"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_protections_bitmask",
+    "state": "0.0",
+    "attributes": {
+      "state_class": "measurement",
+      "friendly_name": "Jakiper 2 protections bitmask"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_fault_status_bitmask",
+    "state": "3328.0",
+    "attributes": {
+      "state_class": "measurement",
+      "friendly_name": "Jakiper 2 fault status bitmask"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_balancer_status",
+    "state": "0.0",
+    "attributes": {
+      "state_class": "measurement",
+      "friendly_name": "Jakiper 2 balancer status"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_1",
+    "state": "3.32200026512146",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 1"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_2",
+    "state": "3.32100009918213",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 2"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_3",
+    "state": "3.32100009918213",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 3"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_4",
+    "state": "3.32300019264221",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 4"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_5",
+    "state": "3.32300019264221",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 5"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_6",
+    "state": "3.32200026512146",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 6"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_7",
+    "state": "3.32200026512146",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 7"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_8",
+    "state": "3.32500004768372",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 8"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_9",
+    "state": "3.32400012016296",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 9"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_10",
+    "state": "3.32400012016296",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 10"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_11",
+    "state": "3.32300019264221",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 11"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_12",
+    "state": "3.32300019264221",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 12"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_13",
+    "state": "3.32000017166138",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 13"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_14",
+    "state": "3.32200026512146",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 14"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_15",
+    "state": "3.32600021362305",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 15"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_cell_voltage_16",
+    "state": "3.32300019264221",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell voltage 16"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_delta_cell_voltage",
+    "state": "0.00600004196166992",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage",
+      "friendly_name": "Jakiper 2 delta cell voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_average_cell_voltage",
+    "state": "3.32275032997131",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage",
+      "friendly_name": "Jakiper 2 average cell voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_min_cell_voltage",
+    "state": "3.32000017166138",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage",
+      "friendly_name": "Jakiper 2 min cell voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_max_cell_voltage",
+    "state": "3.32600021362305",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "V",
+      "device_class": "voltage",
+      "friendly_name": "Jakiper 2 max cell voltage"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_min_voltage_cell",
+    "state": "13.0",
+    "attributes": {
+      "state_class": "measurement",
+      "friendly_name": "Jakiper 2 min voltage cell"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_max_voltage_cell",
+    "state": "15.0",
+    "attributes": {
+      "state_class": "measurement",
+      "friendly_name": "Jakiper 2 max voltage cell"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_temperature_1",
+    "state": "25.5",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "˚C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 battery temperature 1"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_temperature_2",
+    "state": "25.5",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "˚C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 battery temperature 2"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_temperature_3",
+    "state": "25.1000003814697",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "˚C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 battery temperature 3"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_temperature_4",
+    "state": "25.1000003814697",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "˚C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 battery temperature 4"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_mosfet_temperature",
+    "state": "26.8000011444092",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "˚C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 mosfet temperature"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_environment_temperature",
+    "state": "25.3000011444092",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "˚C",
+      "device_class": "temperature",
+      "friendly_name": "Jakiper 2 environment temperature"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_yambms_jakiper_2_charging_power",
+    "state": "557.123901367188",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "W",
+      "device_class": "power",
+      "friendly_name": "Jakiper 2 yambms Jakiper 2 Charging Power"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_yambms_jakiper_2_discharging_power",
+    "state": "0.0",
+    "attributes": {
+      "state_class": "measurement",
+      "unit_of_measurement": "W",
+      "device_class": "power",
+      "friendly_name": "Jakiper 2 yambms Jakiper 2 Discharging Power"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_warnings",
+    "state": "",
+    "attributes": {
+      "friendly_name": "Jakiper 2 warnings"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_protections",
+    "state": "",
+    "attributes": {
+      "friendly_name": "Jakiper 2 protections"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_faults",
+    "state": "",
+    "attributes": {
+      "friendly_name": "Jakiper 2 faults"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_status",
+    "state": "CHG;MOSFET_CHG;MOSFET_DCHG",
+    "attributes": {
+      "friendly_name": "Jakiper 2 status"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_version_information",
+    "state": "P16S100A-21519-2.00",
+    "attributes": {
+      "friendly_name": "Jakiper 2 version information"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_bms_serial_number",
+    "state": "215192031700012A    ",
+    "attributes": {
+      "friendly_name": "Jakiper 2 bms serial number"
+    }
+  },
+  {
+    "entity_id": "sensor.jakiper_2_battery_pack_serial_number",
+    "state": "                    ",
+    "attributes": {
+      "friendly_name": "Jakiper 2 battery pack serial number"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_cycles_offset",
+    "state": "0.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 3000.0,
+      "step": 1.0,
+      "mode": "auto",
+      "icon": "mdi:counter",
+      "friendly_name": "Jakiper 2 Charging Cycles Offset"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_overvoltage_alarm",
+    "state": "57600.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack overvoltage alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_overvoltage_protection",
+    "state": "58400.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack overvoltage protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_overvoltage_protection_release",
+    "state": "54000.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack overvoltage protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_overvoltage_protection_delay_time",
+    "state": "1.0",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 pack overvoltage protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_overvoltage_alarm",
+    "state": "3600.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 cell overvoltage alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_overvoltage_protection",
+    "state": "3.7",
+    "attributes": {
+      "min": 0.0,
+      "max": 65.535,
+      "step": 0.001,
+      "mode": "box",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell overvoltage protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_overvoltage_protection_release",
+    "state": "3380.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 cell overvoltage protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_overvoltage_protection_delay_time",
+    "state": "1.0",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 cell overvoltage protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_undervoltage_alarm",
+    "state": "44800.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack undervoltage alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_undervoltage_protection",
+    "state": "43200.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack undervoltage protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_undervoltage_protection_release",
+    "state": "47200.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack undervoltage protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_undervoltage_protection_delay_time",
+    "state": "1.0",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 pack undervoltage protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_undervoltage_alarm",
+    "state": "2700.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 cell undervoltage alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_undervoltage_protection",
+    "state": "2.5",
+    "attributes": {
+      "min": 0.0,
+      "max": 65.535,
+      "step": 0.001,
+      "mode": "box",
+      "unit_of_measurement": "V",
+      "friendly_name": "Jakiper 2 cell undervoltage protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_undervoltage_protection_release",
+    "state": "2800.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 cell undervoltage protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_undervoltage_protection_delay_time",
+    "state": "1.0",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 cell undervoltage protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overcurrent_alarm",
+    "state": "105.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "A",
+      "friendly_name": "Jakiper 2 charging overcurrent alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overcurrent_protection",
+    "state": "110.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "A",
+      "friendly_name": "Jakiper 2 charging overcurrent protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overcurrent_protection_delay_time",
+    "state": "1.0",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 charging overcurrent protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overcurrent_alarm",
+    "state": "105.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "A",
+      "friendly_name": "Jakiper 2 discharging overcurrent alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overcurrent_protection",
+    "state": "110.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "A",
+      "friendly_name": "Jakiper 2 discharging overcurrent protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overcurrent_protection_delay_time",
+    "state": "7.0",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 discharging overcurrent protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overcurrent_2_protection",
+    "state": "150.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "A",
+      "friendly_name": "Jakiper 2 discharging overcurrent 2 protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overcurrent_2_protection_delay_time",
+    "state": "0.4",
+    "attributes": {
+      "min": 0.1,
+      "max": 25.5,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "s",
+      "friendly_name": "Jakiper 2 discharging overcurrent 2 protection delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overtemperature_alarm",
+    "state": "60.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 charging overtemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overtemperature_protection",
+    "state": "65.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 charging overtemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overtemperature_protection_release",
+    "state": "55.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 charging overtemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overtemperature_alarm",
+    "state": "65.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 discharging overtemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overtemperature_protection",
+    "state": "70.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 discharging overtemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_overtemperature_protection_release",
+    "state": "60.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 discharging overtemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_undertemperature_alarm",
+    "state": "5.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 charging undertemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_undertemperature_protection",
+    "state": "0.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 charging undertemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_undertemperature_protection_release",
+    "state": "2.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 charging undertemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_undertemperature_alarm",
+    "state": "-15.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 discharging undertemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_undertemperature_protection",
+    "state": "-20.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 discharging undertemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_discharging_undertemperature_protection_release",
+    "state": "-15.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 discharging undertemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_mosfet_overtemperature_alarm",
+    "state": "90.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 mosfet overtemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_mosfet_overtemperature_protection",
+    "state": "110.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 mosfet overtemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_mosfet_overtemperature_protection_release",
+    "state": "85.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 mosfet overtemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_environment_overtemperature_alarm",
+    "state": "55.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 environment overtemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_environment_overtemperature_protection",
+    "state": "60.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 environment overtemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_environment_overtemperature_protection_release",
+    "state": "55.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 environment overtemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_environment_undertemperature_alarm",
+    "state": "-15.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 environment undertemperature alarm"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_environment_undertemperature_protection",
+    "state": "-20.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 environment undertemperature protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_environment_undertemperature_protection_release",
+    "state": "-15.0",
+    "attributes": {
+      "min": -200.0,
+      "max": 200.0,
+      "step": 0.1,
+      "mode": "box",
+      "unit_of_measurement": "°C",
+      "friendly_name": "Jakiper 2 environment undertemperature protection release"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_balance_start_delta_voltage",
+    "state": "20.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 balance start delta voltage"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_full_charge_voltage",
+    "state": "56000.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 pack full charge voltage"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_pack_full_charge_current",
+    "state": "1000.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mA",
+      "friendly_name": "Jakiper 2 pack full-charge current"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_sleep_voltage",
+    "state": "3150.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "mV",
+      "friendly_name": "Jakiper 2 cell sleep voltage"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_cell_sleep_delay_time",
+    "state": "5.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "min",
+      "friendly_name": "Jakiper 2 cell sleep delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_short_circuit_protect_delay_time",
+    "state": "300.0",
+    "attributes": {
+      "min": 25.0,
+      "max": 500.0,
+      "step": 25.0,
+      "mode": "box",
+      "unit_of_measurement": "us",
+      "friendly_name": "Jakiper 2 short circuit protect delay time"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_state_of_charge_alarm_threshold",
+    "state": "5.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 100.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "%",
+      "friendly_name": "Jakiper 2 state of charge alarm threshold"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overcurrent_2_protection",
+    "state": "150.0",
+    "attributes": {
+      "min": 0.0,
+      "max": 65535.0,
+      "step": 1.0,
+      "mode": "box",
+      "unit_of_measurement": "A",
+      "friendly_name": "Jakiper 2 charging overcurrent 2 protection"
+    }
+  },
+  {
+    "entity_id": "number.jakiper_2_charging_overcurrent_2_protection_delay_time",
+    "state": "100.0",
+    "attributes": {
+      "min": 25.0,
+      "max": 6375.0,
+      "step": 25.0,
+      "mode": "box",
+      "unit_of_measurement": "ms",
+      "friendly_name": "Jakiper 2 Charging overcurrent 2 protection delay time"
+    }
+  }
+]

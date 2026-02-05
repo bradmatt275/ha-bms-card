@@ -105,6 +105,10 @@ export class HABMSCard extends LitElement implements LovelaceCard {
       capacityRemaining: null,
       capacityFull: null,
       cycleCount: null,
+      soh: null,
+      statusText: null,
+      minTemp: null,
+      maxTemp: null,
       tempMos: null,
       tempEnv: null,
       tempCells: [],
@@ -250,6 +254,10 @@ export class HABMSCard extends LitElement implements LovelaceCard {
         this.hass,
         resolver.getEntity("cycle_count")
       ),
+      soh: resolver.getNumericState(this.hass, resolver.getEntity("soh")),
+      statusText: resolver.getStringState(this.hass, resolver.getEntity("status")),
+      minTemp: resolver.getNumericState(this.hass, resolver.getEntity("min_temp")),
+      maxTemp: resolver.getNumericState(this.hass, resolver.getEntity("max_temp")),
       tempMos: resolver.getNumericState(this.hass, resolver.getEntity("temp_mos")),
       tempEnv: resolver.getNumericState(this.hass, resolver.getEntity("temp_env")),
       tempCells,
@@ -273,17 +281,35 @@ export class HABMSCard extends LitElement implements LovelaceCard {
 
   /**
    * Get list of active alarms
+   * Supports both binary alarms (on/off) and text alarms (non-empty = active)
    */
   private _getActiveAlarms(): ActiveAlarm[] {
     const alarms = this._entityResolver.getAlarms();
-    return alarms
-      .filter((alarm) =>
-        this._entityResolver.getBinaryState(this.hass, alarm.entity)
-      )
-      .map((alarm) => ({
-        label: alarm.label,
-        severity: alarm.severity,
-      }));
+    const activeAlarms: ActiveAlarm[] = [];
+
+    for (const alarm of alarms) {
+      if (alarm.type === "text") {
+        // Text-type alarm: active when state is non-empty
+        const state = this._entityResolver.getStringState(this.hass, alarm.entity);
+        if (state !== null && state.trim() !== "") {
+          activeAlarms.push({
+            label: alarm.label,
+            severity: alarm.severity,
+            message: state,
+          });
+        }
+      } else {
+        // Binary alarm: active when state is "on"
+        if (this._entityResolver.getBinaryState(this.hass, alarm.entity)) {
+          activeAlarms.push({
+            label: alarm.label,
+            severity: alarm.severity,
+          });
+        }
+      }
+    }
+
+    return activeAlarms;
   }
 
   /**
@@ -322,6 +348,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 <bms-alert-badge
                   .label=${alarm.label}
                   .severity=${alarm.severity}
+                  .message=${alarm.message || ""}
                 ></bms-alert-badge>
               `
             )}
@@ -463,7 +490,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
   }
 
   /**
-   * Render secondary stats (temps, delta, cycles)
+   * Render secondary stats (temps, delta, cycles, soh, status)
    */
   private _renderSecondaryStats(): TemplateResult {
     const { _config: config, _state: state } = this;
@@ -492,6 +519,17 @@ export class HABMSCard extends LitElement implements LovelaceCard {
               ></bms-stat>
             `
           : nothing}
+        ${config.display.show_soh
+          ? html`
+              <bms-stat
+                label="SOH"
+                .value=${state.soh}
+                unit="%"
+                .decimals=${1}
+                .entityId=${this._getClickableEntityId("soh")}
+              ></bms-stat>
+            `
+          : nothing}
         ${config.display.show_capacity
           ? html`
               <bms-stat
@@ -514,6 +552,15 @@ export class HABMSCard extends LitElement implements LovelaceCard {
               ></bms-stat>
             `
           : nothing}
+        ${config.display.show_status && state.statusText !== null
+          ? html`
+              <bms-stat
+                label="Status"
+                .value=${state.statusText}
+                .entityId=${this._getClickableEntityId("status")}
+              ></bms-stat>
+            `
+          : nothing}
       </bms-stat-card>
     `;
   }
@@ -524,27 +571,68 @@ export class HABMSCard extends LitElement implements LovelaceCard {
   private _renderTemperatureSection(): TemplateResult | typeof nothing {
     const { _config: config, _state: state } = this;
 
-    if (!config.display.show_temperatures || state.tempCells.length === 0) {
+    if (!config.display.show_temperatures) {
+      return nothing;
+    }
+
+    // Check if we have any temperature data to show
+    const hasMinMaxTemp = state.minTemp !== null || state.maxTemp !== null;
+    const hasTempCells = state.tempCells.length > 0;
+
+    if (!hasMinMaxTemp && !hasTempCells) {
       return nothing;
     }
 
     const tempEntityIds = this._getTempCellEntityIds();
+    const isSequential = this._entityResolver.getIntegration() === "yambms";
 
     return html`
       <div class="temp-section">
-        <div class="temp-grid">
-          ${state.tempCells.map(
-            (temp, i) => html`
-              <bms-temp-bar
-                label="T${this._getTempRange(i)}"
-                .value=${temp}
-                .warning=${config.temperature.warning}
-                .critical=${config.temperature.critical}
-                .entityId=${tempEntityIds[i] || ""}
-              ></bms-temp-bar>
+        ${hasMinMaxTemp
+          ? html`
+              <div class="temp-grid">
+                ${state.minTemp !== null
+                  ? html`
+                      <bms-temp-bar
+                        label="Min Temp"
+                        .value=${state.minTemp}
+                        .warning=${config.temperature.warning}
+                        .critical=${config.temperature.critical}
+                        .entityId=${this._getClickableEntityId("min_temp")}
+                      ></bms-temp-bar>
+                    `
+                  : nothing}
+                ${state.maxTemp !== null
+                  ? html`
+                      <bms-temp-bar
+                        label="Max Temp"
+                        .value=${state.maxTemp}
+                        .warning=${config.temperature.warning}
+                        .critical=${config.temperature.critical}
+                        .entityId=${this._getClickableEntityId("max_temp")}
+                      ></bms-temp-bar>
+                    `
+                  : nothing}
+              </div>
             `
-          )}
-        </div>
+          : nothing}
+        ${hasTempCells
+          ? html`
+              <div class="temp-grid">
+                ${state.tempCells.map(
+                  (temp, i) => html`
+                    <bms-temp-bar
+                      label="${isSequential ? `Temp ${i + 1}` : `T${this._getTempRange(i)}`}"
+                      .value=${temp}
+                      .warning=${config.temperature.warning}
+                      .critical=${config.temperature.critical}
+                      .entityId=${tempEntityIds[i] || ""}
+                    ></bms-temp-bar>
+                  `
+                )}
+              </div>
+            `
+          : nothing}
       </div>
     `;
   }

@@ -80,6 +80,10 @@ export interface DisplayConfig {
   show_cycle_count: boolean;
   /** Show capacity stat */
   show_capacity: boolean;
+  /** Show state of health stat */
+  show_soh: boolean;
+  /** Show BMS status text stat */
+  show_status: boolean;
   /** Reduce padding for smaller cards */
   compact_mode: boolean;
 }
@@ -90,6 +94,8 @@ export interface DisplayConfig {
 export interface EntityPattern {
   /** Prefix to replace {prefix} in templates */
   prefix?: string;
+  /** Integration preset for entity naming patterns */
+  integration?: "default" | "yambms";
 }
 
 /**
@@ -112,6 +118,12 @@ export interface EntityConfig {
   /** Charge cycle count */
   cycle_count?: string;
 
+  // Health and status
+  /** State of health percentage */
+  soh?: string;
+  /** BMS status text */
+  status?: string;
+
   // Derived values (optional - calculated from cell voltages if missing)
   /** Delta voltage between cells (calculated if not provided) */
   delta_voltage?: string;
@@ -123,6 +135,10 @@ export interface EntityConfig {
   max_cell_voltage?: string;
 
   // Temperature sensors
+  /** Minimum temperature sensor */
+  min_temp?: string;
+  /** Maximum temperature sensor */
+  max_temp?: string;
   /** MOS/FET temperature sensor */
   temp_mos?: string;
   /** Environment temperature sensor */
@@ -164,12 +180,14 @@ export interface AlarmOverrides {
  * Individual alarm configuration
  */
 export interface AlarmConfig {
-  /** Binary sensor entity ID */
+  /** Sensor entity ID */
   entity: string;
   /** Display label for the alarm */
   label: string;
   /** Severity level */
   severity: "warning" | "critical";
+  /** Alarm type: binary (on/off) or text (non-empty = active) */
+  type?: "binary" | "text";
 }
 
 // ============================================================================
@@ -207,8 +225,16 @@ export interface BMSState {
   capacityFull: number | null;
   /** Charge cycle count */
   cycleCount: number | null;
+  /** State of health percentage */
+  soh: number | null;
+  /** BMS status text */
+  statusText: string | null;
 
   // Temperature values
+  /** Minimum temperature in °C */
+  minTemp: number | null;
+  /** Maximum temperature in °C */
+  maxTemp: number | null;
   /** MOS temperature in °C */
   tempMos: number | null;
   /** Environment temperature in °C */
@@ -255,6 +281,8 @@ export interface BMSState {
 export interface ActiveAlarm {
   label: string;
   severity: "warning" | "critical";
+  /** Message text for text-type alarms (the raw sensor state value) */
+  message?: string;
 }
 
 // ============================================================================
@@ -310,6 +338,7 @@ export interface CellGridProps {
 export interface AlertBadgeProps {
   label: string;
   severity: "warning" | "critical";
+  message?: string;
 }
 
 /**

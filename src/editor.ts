@@ -16,6 +16,7 @@ import {
   SUPPORTED_CELL_COUNTS,
   SUPPORTED_COLUMN_COUNTS,
   DEFAULT_ALARMS,
+  YAMBMS_DEFAULT_ALARMS,
 } from "./const";
 
 @customElement("ha-bms-card-editor")
@@ -268,6 +269,25 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           Used to auto-generate entity IDs (e.g., sensor.pack_1_battery_soc)
         </span>
       </div>
+
+      <div class="form-group">
+        <label>Integration</label>
+        <ha-selector
+          .hass=${this.hass}
+          .selector=${{ select: {
+            options: [
+              { value: "default", label: "Default" },
+              { value: "yambms", label: "YamBMS" },
+            ],
+            mode: "dropdown",
+          }}}
+          .value=${this._config.entity_pattern?.integration || "default"}
+          @value-changed=${(e: CustomEvent) => this._updateEntityPattern("integration", e.detail.value)}
+        ></ha-selector>
+        <span class="help-text">
+          Select your BMS integration to auto-match entity naming patterns.
+        </span>
+      </div>
     `;
   }
 
@@ -510,6 +530,22 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       </div>
 
       <div class="switch-row">
+        <span class="switch-label">Show State of Health</span>
+        <ha-switch
+          .checked=${this._config.display?.show_soh ?? false}
+          @change=${(e: Event) => this._updateDisplay("show_soh", (e.target as HTMLInputElement).checked)}
+        ></ha-switch>
+      </div>
+
+      <div class="switch-row">
+        <span class="switch-label">Show BMS Status</span>
+        <ha-switch
+          .checked=${this._config.display?.show_status ?? false}
+          @change=${(e: Event) => this._updateDisplay("show_status", (e.target as HTMLInputElement).checked)}
+        ></ha-switch>
+      </div>
+
+      <div class="switch-row">
         <span class="switch-label">Compact Mode</span>
         <ha-switch
           .checked=${this._config.display?.compact_mode ?? false}
@@ -539,7 +575,13 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       ${this._renderEntityField("capacity_full", "Full Capacity", ["sensor"])}
       ${this._renderEntityField("cycle_count", "Cycle Count", ["sensor"])}
 
+      <div class="section-header">Health & Status</div>
+      ${this._renderEntityField("soh", "State of Health", ["sensor"])}
+      ${this._renderEntityField("status", "BMS Status", ["sensor"])}
+
       <div class="section-header">Temperature</div>
+      ${this._renderEntityField("min_temp", "Minimum Temperature", ["sensor"])}
+      ${this._renderEntityField("max_temp", "Maximum Temperature", ["sensor"])}
       ${this._renderEntityField("temp_mos", "MOS Temperature", ["sensor"])}
       ${this._renderEntityField("temp_env", "Environment Temperature", ["sensor"])}
 
@@ -607,15 +649,44 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
    * Render alerts configuration tab
    */
   private _renderAlertsTab(): TemplateResult {
+    const integration = this._config.entity_pattern?.integration || "default";
     const alarms = this._config.entities?.alarms || [];
-    const overrides = this._config.entities?.alarm_overrides || {};
 
     return html`
       <div class="help-text" style="margin-bottom: 12px;">
         Configure alarm entities to monitor. When using an entity prefix, default alarms are auto-generated.
-        Override specific entities below or add custom alarms.
+        ${integration === "yambms"
+          ? "YamBMS uses aggregate text sensors for warnings, protections, and faults."
+          : "Override specific entities below or add custom alarms."}
       </div>
 
+      ${integration === "yambms"
+        ? this._renderYambmsAlarmSection()
+        : this._renderDefaultAlarmSection()}
+
+      <div class="section-header" style="margin-top: 24px;">Additional Custom Alarms</div>
+      <div class="help-text" style="margin-bottom: 8px;">
+        Add extra alarms beyond the defaults.
+      </div>
+      
+      ${alarms.map((alarm, index) => this._renderAlarmRow(alarm, index))}
+      
+      <div style="margin-top: 12px;">
+        <mwc-button @click=${this._addAlarm}>
+          <ha-icon icon="mdi:plus"></ha-icon>
+          Add Alarm
+        </mwc-button>
+      </div>
+    `;
+  }
+
+  /**
+   * Render default integration alarm overrides (binary sensors)
+   */
+  private _renderDefaultAlarmSection(): TemplateResult {
+    const overrides = this._config.entities?.alarm_overrides || {};
+
+    return html`
       <div class="section-header">Default Alarm Entity Overrides</div>
       <div class="help-text" style="margin-bottom: 8px;">
         Override the auto-generated entity IDs for default alarms. Leave empty to use the pattern.
@@ -634,20 +705,31 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           </div>
         `)}
       </div>
+    `;
+  }
 
-      <div class="section-header" style="margin-top: 24px;">Additional Custom Alarms</div>
+  /**
+   * Render YamBMS alarm entity overrides (aggregate text sensors)
+   */
+  private _renderYambmsAlarmSection(): TemplateResult {
+    return html`
+      <div class="section-header">Aggregate Alarm Sensors</div>
       <div class="help-text" style="margin-bottom: 8px;">
-        Add extra alarms beyond the defaults.
+        YamBMS uses text-based aggregate sensors. A non-empty value means alarms are active.
+        Leave empty to use the auto-generated entity IDs from the prefix.
       </div>
-      
-      ${alarms.map((alarm, index) => this._renderAlarmRow(alarm, index))}
-      
-      <div style="margin-top: 12px;">
-        <mwc-button @click=${this._addAlarm}>
-          <ha-icon icon="mdi:plus"></ha-icon>
-          Add Alarm
-        </mwc-button>
-      </div>
+
+      ${YAMBMS_DEFAULT_ALARMS.map((alarm) => html`
+        <div class="form-group">
+          <label>${alarm.label} (${alarm.severity})</label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ entity: { domain: ["sensor"] } }}
+            .value=${this._getYambmsAlarmOverride(alarm.label) || ""}
+            @value-changed=${(e: CustomEvent) => this._updateYambmsAlarmOverride(alarm.label, alarm.severity, e.detail.value || "")}
+          ></ha-selector>
+        </div>
+      `)}
     `;
   }
 
@@ -859,6 +941,48 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       entities.alarm_overrides = overrides;
     } else {
       delete entities.alarm_overrides;
+    }
+    
+    this._config = { ...this._config, entities };
+    this._fireConfigChanged();
+  }
+
+  /**
+   * Get YamBMS alarm override entity for a given label
+   */
+  private _getYambmsAlarmOverride(label: string): string {
+    const alarms = this._config.entities?.alarms || [];
+    const found = alarms.find((a) => a.label === label);
+    return found?.entity || "";
+  }
+
+  /**
+   * Update a YamBMS alarm override entity
+   */
+  private _updateYambmsAlarmOverride(label: string, severity: "warning" | "critical", value: string): void {
+    const entities = { ...this._config.entities };
+    let alarms = [...(entities.alarms || [])];
+    
+    const existingIndex = alarms.findIndex((a) => a.label === label);
+    
+    if (value) {
+      const alarmConfig = { entity: value, label, severity, type: "text" as const };
+      if (existingIndex >= 0) {
+        alarms[existingIndex] = alarmConfig;
+      } else {
+        alarms.push(alarmConfig);
+      }
+    } else {
+      // Remove override if value is cleared
+      if (existingIndex >= 0) {
+        alarms.splice(existingIndex, 1);
+      }
+    }
+    
+    if (alarms.length > 0) {
+      entities.alarms = alarms;
+    } else {
+      delete entities.alarms;
     }
     
     this._config = { ...this._config, entities };

@@ -11,19 +11,24 @@ import { alertBadgeStyles } from "../styles";
 export class BMSAlertBadge extends LitElement {
   @property({ type: String }) label = "";
   @property({ type: String }) severity: "warning" | "critical" = "warning";
+  @property({ type: String }) message = "";
 
   static styles = alertBadgeStyles;
 
   protected render() {
+    const displayText = this.message
+      ? `${this.label}: ${this.message}`
+      : this.label;
+
     return html`
-      <span class="badge ${this.severity}" role="alert" aria-label="${this.label} ${this.severity}">
+      <span class="badge ${this.severity}" role="alert" aria-label="${displayText} ${this.severity}">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path
             fill="currentColor"
             d="M12,2L1,21H23M12,6L19.53,19H4.47M11,10V14H13V10M11,16V18H13V16"
           />
         </svg>
-        ${this.label}
+        ${displayText}
       </span>
     `;
   }

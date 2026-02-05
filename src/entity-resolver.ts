@@ -4,8 +4,15 @@
  */
 
 import { HomeAssistant } from "custom-card-helpers";
-import { BMSCardConfig, AlarmConfig } from "./types";
-import { DEFAULT_TEMPLATES, DEFAULT_ALARMS, getDefaultTempRanges } from "./const";
+import { BMSCardConfig, AlarmConfig, DefaultTemplates } from "./types";
+import {
+  DEFAULT_TEMPLATES,
+  DEFAULT_ALARMS,
+  YAMBMS_DEFAULT_ALARMS,
+  TEMPLATE_PRESETS,
+  DEFAULT_TEMP_SENSOR_COUNT,
+  getDefaultTempRanges,
+} from "./const";
 
 /**
  * Resolves entity IDs from configuration, supporting both
@@ -14,6 +21,8 @@ import { DEFAULT_TEMPLATES, DEFAULT_ALARMS, getDefaultTempRanges } from "./const
 export class EntityResolver {
   private _config: BMSCardConfig;
   private _prefix: string;
+  private _integration: string;
+  private _templates: DefaultTemplates;
   private _resolvedEntities: Map<string, string> = new Map();
   private _allEntityIds: string[] = [];
   private _alarmEntities: AlarmConfig[] = [];
@@ -29,10 +38,14 @@ export class EntityResolver {
     "capacity_remaining",
     "capacity_full",
     "cycle_count",
+    "soh",
+    "status",
     "delta_voltage",
     "average_cell_voltage",
     "min_cell_voltage",
     "max_cell_voltage",
+    "min_temp",
+    "max_temp",
     "temp_mos",
     "temp_env",
     "charging",
@@ -44,6 +57,8 @@ export class EntityResolver {
   constructor(config: BMSCardConfig) {
     this._config = config;
     this._prefix = config.entity_pattern?.prefix ?? "";
+    this._integration = config.entity_pattern?.integration ?? "default";
+    this._templates = TEMPLATE_PRESETS[this._integration] || DEFAULT_TEMPLATES;
     this._resolveAllEntities();
   }
 
@@ -82,7 +97,7 @@ export class EntityResolver {
     }
 
     // Fall back to template pattern
-    const template = DEFAULT_TEMPLATES[key];
+    const template = this._templates[key];
     if (template && this._prefix) {
       return this._applyTemplate(template);
     }
@@ -117,7 +132,7 @@ export class EntityResolver {
       }
       // Use default pattern
       else if (this._prefix) {
-        entity = this._applyCellTemplate(DEFAULT_TEMPLATES.cell_voltage_pattern, i);
+        entity = this._applyCellTemplate(this._templates.cell_voltage_pattern, i);
       }
 
       if (entity) {
@@ -144,8 +159,8 @@ export class EntityResolver {
 
       if (cellBalancing?.pattern) {
         entity = this._applyCellTemplate(cellBalancing.pattern, i);
-      } else if (this._prefix && DEFAULT_TEMPLATES.cell_balancing_pattern) {
-        entity = this._applyCellTemplate(DEFAULT_TEMPLATES.cell_balancing_pattern, i);
+      } else if (this._prefix && this._templates.cell_balancing_pattern) {
+        entity = this._applyCellTemplate(this._templates.cell_balancing_pattern, i);
       }
 
       if (entity) {
@@ -166,6 +181,9 @@ export class EntityResolver {
 
   /**
    * Resolve temperature cell entities
+   * Supports two modes:
+   * - Range-based: sensor.{prefix}_cell_temp_{range} (default integration)
+   * - Sequential: sensor.{prefix}_battery_temperature_{n} (yambms integration)
    */
   private _resolveTempCellEntities(): void {
     const tempCells = this._config.entities?.temp_cells;
@@ -181,19 +199,37 @@ export class EntityResolver {
 
     // Generate from template if prefix is available
     if (this._prefix) {
-      const ranges = getDefaultTempRanges(this._config.cells.count);
-      ranges.forEach((range, index) => {
-        const entity = DEFAULT_TEMPLATES.temp_cell_pattern
-          .replace(/\{prefix\}/g, this._prefix)
-          .replace(/\{range\}/g, range);
-        this._resolvedEntities.set(`temp_cell_${index}`, entity);
-        this._allEntityIds.push(entity);
-      });
+      const tempPattern = this._templates.temp_cell_pattern;
+      if (!tempPattern) return;
+
+      // Check if the pattern uses {n} (sequential) or {range} (range-based)
+      if (tempPattern.includes("{n}")) {
+        // Sequential mode (e.g., YamBMS: battery_temperature_1, battery_temperature_2, ...)
+        const sensorCount = DEFAULT_TEMP_SENSOR_COUNT[this._integration] || 4;
+        for (let i = 1; i <= sensorCount; i++) {
+          const entity = tempPattern
+            .replace(/\{prefix\}/g, this._prefix)
+            .replace(/\{n\}/g, String(i));
+          this._resolvedEntities.set(`temp_cell_${i - 1}`, entity);
+          this._allEntityIds.push(entity);
+        }
+      } else {
+        // Range-based mode (e.g., default: cell_temp_1_4, cell_temp_5_8, ...)
+        const ranges = getDefaultTempRanges(this._config.cells.count);
+        ranges.forEach((range, index) => {
+          const entity = tempPattern
+            .replace(/\{prefix\}/g, this._prefix)
+            .replace(/\{range\}/g, range);
+          this._resolvedEntities.set(`temp_cell_${index}`, entity);
+          this._allEntityIds.push(entity);
+        });
+      }
     }
   }
 
   /**
    * Resolve alarm entities
+   * Supports both binary sensor alarms (default) and aggregate text alarms (yambms)
    */
   private _resolveAlarmEntities(): void {
     const alarms = this._config.entities?.alarms;
@@ -207,7 +243,20 @@ export class EntityResolver {
       return;
     }
 
-    // Generate default alarms from template patterns if prefix is available
+    // Use YamBMS aggregate text alarms for yambms integration
+    if (this._integration === "yambms" && this._prefix) {
+      this._alarmEntities = YAMBMS_DEFAULT_ALARMS.map((alarm) => ({
+        ...alarm,
+        entity: alarm.entity.replace(/\{prefix\}/g, this._prefix),
+      }));
+
+      this._alarmEntities.forEach((alarm) => {
+        this._allEntityIds.push(alarm.entity);
+      });
+      return;
+    }
+
+    // Generate default binary alarms from template patterns if prefix is available
     if (this._prefix) {
       const overrides = this._config.entities?.alarm_overrides || {};
       
@@ -220,18 +269,20 @@ export class EntityResolver {
               entity: override,
               label: defaultAlarm.label,
               severity: defaultAlarm.severity,
-            };
+              type: "binary" as const,
+            } as AlarmConfig;
           }
           
           // Fall back to template
-          const template = DEFAULT_TEMPLATES[defaultAlarm.key];
+          const template = this._templates[defaultAlarm.key];
           if (!template) return null;
           
           return {
             entity: this._applyTemplate(template),
             label: defaultAlarm.label,
             severity: defaultAlarm.severity,
-          };
+            type: "binary" as const,
+          } as AlarmConfig;
         })
         .filter((alarm): alarm is AlarmConfig => alarm !== null);
 
@@ -338,6 +389,28 @@ export class EntityResolver {
       return false;
     }
     return hass.states[entityId].state === "on";
+  }
+
+  /**
+   * Get raw string state value from an entity
+   * @returns string state or null if entity doesn't exist or is unavailable
+   */
+  getStringState(hass: HomeAssistant, entityId: string | undefined): string | null {
+    if (!entityId || !hass.states[entityId]) {
+      return null;
+    }
+    const state = hass.states[entityId].state;
+    if (state === "unknown" || state === "unavailable") {
+      return null;
+    }
+    return state;
+  }
+
+  /**
+   * Get the current integration preset name
+   */
+  getIntegration(): string {
+    return this._integration;
   }
 
   /**

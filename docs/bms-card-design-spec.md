@@ -6,10 +6,11 @@ A custom Lovelace card for Home Assistant that displays battery management syste
 
 ### Design Goals
 - **BMS Agnostic**: Works with any BMS (JK-BMS, Jakiper/Pylon, Daly, etc.) through flexible entity configuration
+- **Integration Presets**: Built-in template presets for common integrations (Default, YamBMS) with auto-matched entity naming
 - **Material You Design**: Modern, clean aesthetic following Google's Material You design language
 - **Single Pack Focus**: Each card instance displays one battery pack
 - **Flexible Cell Count**: Supports 4s through 32s configurations
-- **Comprehensive Alerts**: Multiple alarm/warning entity support with visual indicators
+- **Comprehensive Alerts**: Binary sensor alarms and aggregate text alarms (warnings/protections/faults)
 - **Cell Balancing Visualization**: Show which cells are actively balancing
 
 ---
@@ -32,10 +33,12 @@ A custom Lovelace card for Home Assistant that displays battery management syste
 │                                                             │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────────────┐  ┌─────────────────────┐           │
-│  │ Voltage    Current  │  │ MOS Temp   Delta mV │           │
-│  │  53.92V     19A     │  │  34.5°C      9 mV   │           │
-│  │ Power               │  │ Env Temp            │           │
-│  │  1023W              │  │  28.0°C             │           │
+│  │ Voltage    Current  │  │ MOS Temp   Cycles   │           │
+│  │  53.92V     19A     │  │  34.5°C      330    │           │
+│  │ Power               │  │ SOH        Status   │           │
+│  │  1023W              │  │  96.0%     CHG;...  │           │
+│  │ Delta               │  │ Capacity            │           │
+│  │  9 mV               │  │  29.86 / 96.45 Ah   │           │
 │  └─────────────────────┘  └─────────────────────┘           │
 ├─────────────────────────────────────────────────────────────┤
 │                     Cell Voltage Grid                       │
@@ -52,8 +55,9 @@ A custom Lovelace card for Home Assistant that displays battery management syste
 │                                                             │
 │  [● = actively balancing indicator]                         │
 ├─────────────────────────────────────────────────────────────┤
-│  Temperature Sensors (optional expandable section)          │
-│  T1-4: 32.9°C  T5-8: 33.0°C  T9-12: 33.1°C  T13-16: 32.7°C │
+│  Temperature Sensors (optional section)                     │
+│  Min: 25.1°C  Max: 25.5°C                                  │
+│  Temp 1: 25.5°C  Temp 2: 25.5°C  Temp 3: 25.1°C  Temp 4: 25.1°C │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -206,73 +210,134 @@ For certain metrics, the card supports both explicit sensor entities AND automat
 | Max Cell Number | Index of highest voltage cell | (derived only) |
 | Power | \`voltage × current\` | \`entities.power\` |
 
-### Default Entity Templates
+### Integration Presets & Entity Templates
 
-When using \`entity_pattern.prefix\`, the card auto-generates entity IDs using these template patterns:
+The card supports multiple integration presets, each with its own set of default entity templates. The preset is selected via `entity_pattern.integration` in the config (default: `"default"`).
 
-#### Core Sensors
+#### Default Integration Templates
+
+When using `entity_pattern.prefix` with the default integration, these template patterns are used:
+
+##### Core Sensors
 | Key | Template Pattern |
 |-----|-----------------|
-| soc | \`sensor.{prefix}_battery_soc\` |
-| voltage | \`sensor.{prefix}_battery_voltage\` |
-| current | \`sensor.{prefix}_battery_current\` |
-| power | \`sensor.{prefix}_battery_power\` |
-| capacity_remaining | \`sensor.{prefix}_remaining_capacity\` |
-| capacity_full | \`sensor.{prefix}_battery_full_capacity\` |
-| cycle_count | \`sensor.{prefix}_cycle_count\` |
+| soc | `sensor.{prefix}_battery_soc` |
+| voltage | `sensor.{prefix}_battery_voltage` |
+| current | `sensor.{prefix}_battery_current` |
+| power | `sensor.{prefix}_battery_power` |
+| capacity_remaining | `sensor.{prefix}_remaining_capacity` |
+| capacity_full | `sensor.{prefix}_battery_full_capacity` |
+| cycle_count | `sensor.{prefix}_cycle_count` |
 
-#### Temperature Sensors
+##### Temperature Sensors
 | Key | Template Pattern |
 |-----|-----------------|
-| temp_mos | \`sensor.{prefix}_mos_temp\` |
-| temp_env | \`sensor.{prefix}_env_temp\` |
-| temp_cell_pattern | \`sensor.{prefix}_cell_temp_{range}\` |
+| temp_mos | `sensor.{prefix}_mos_temp` |
+| temp_env | `sensor.{prefix}_env_temp` |
+| temp_cell_pattern | `sensor.{prefix}_cell_temp_{range}` |
 
-#### Cell Sensors
+Temperature sensors use range-based patterns (`{range}` → `1_4`, `5_8`, etc.) and display range labels (T1-4, T5-8, ...).
+
+##### Cell Sensors
 | Key | Template Pattern |
 |-----|-----------------|
-| cell_voltage_pattern | \`sensor.{prefix}_cell_{n}_voltage\` |
-| cell_balancing_pattern | \`binary_sensor.{prefix}_cell_{n}_balancing\` |
+| cell_voltage_pattern | `sensor.{prefix}_cell_{n}_voltage` |
+| cell_balancing_pattern | `binary_sensor.{prefix}_cell_{n}_balancing` |
 
-#### Binary Status Sensors
+##### Binary Status Sensors
 | Key | Template Pattern |
 |-----|-----------------|
-| charging | \`binary_sensor.{prefix}_charge_mos\` |
-| discharging | \`binary_sensor.{prefix}_discharge_mos\` |
-| heater | \`binary_sensor.{prefix}_heater\` |
-| balancing_active | \`binary_sensor.{prefix}_balancing\` |
+| charging | `binary_sensor.{prefix}_charge_mos` |
+| discharging | `binary_sensor.{prefix}_discharge_mos` |
+| heater | `binary_sensor.{prefix}_heater` |
+| balancing_active | `binary_sensor.{prefix}_balancing` |
 
-### Default Alarm Templates
+##### Default Alarm Templates (Binary Sensors)
 
-When a prefix is configured, these alarms are auto-generated and monitored by default:
+When a prefix is configured with the default integration, these binary sensor alarms are auto-generated:
 
 | Alarm Key | Template Pattern | Label | Severity |
 |-----------|-----------------|-------|----------|
-| cell_ovp | \`binary_sensor.{prefix}_cell_ovp\` | Cell OVP | critical |
-| cell_uvp | \`binary_sensor.{prefix}_cell_uvp\` | Cell UVP | critical |
-| pack_ovp | \`binary_sensor.{prefix}_pack_ovp\` | Pack OVP | critical |
-| pack_uvp | \`binary_sensor.{prefix}_pack_uvp\` | Pack UVP | critical |
-| discharge_ocp | \`binary_sensor.{prefix}_discharge_ocp\` | Discharge OCP | critical |
-| charge_ocp | \`binary_sensor.{prefix}_charge_ocp\` | Charge OCP | critical |
-| scp | \`binary_sensor.{prefix}_short_circuit_protection\` | Short Circuit | critical |
-| mos_otp | \`binary_sensor.{prefix}_mos_overtemperature_protection\` | MOS OTP | warning |
-| charge_otp | \`binary_sensor.{prefix}_charging_overtemperature_protection\` | Charge OTP | warning |
-| discharge_otp | \`binary_sensor.{prefix}_discharging_overtemperature_protection\` | Discharge OTP | warning |
-| charge_utp | \`binary_sensor.{prefix}_charging_undertemperature_protection\` | Charge UTP | warning |
-| discharge_utp | \`binary_sensor.{prefix}_discharging_undertemperature_protection\` | Discharge UTP | warning |
-| soc_low | \`binary_sensor.{prefix}_low_capacity_alarm\` | Low SOC | warning |
-| cell_fault | \`binary_sensor.{prefix}_cell_request_charge_voltage_failure_alarm\` | Cell Fault | critical |
+| cell_ovp | `binary_sensor.{prefix}_cell_ovp` | Cell OVP | critical |
+| cell_uvp | `binary_sensor.{prefix}_cell_uvp` | Cell UVP | critical |
+| pack_ovp | `binary_sensor.{prefix}_pack_ovp` | Pack OVP | critical |
+| pack_uvp | `binary_sensor.{prefix}_pack_uvp` | Pack UVP | critical |
+| discharge_ocp | `binary_sensor.{prefix}_discharge_ocp` | Discharge OCP | critical |
+| charge_ocp | `binary_sensor.{prefix}_charge_ocp` | Charge OCP | critical |
+| scp | `binary_sensor.{prefix}_short_circuit_protection` | Short Circuit | critical |
+| mos_otp | `binary_sensor.{prefix}_mos_overtemperature_protection` | MOS OTP | warning |
+| charge_otp | `binary_sensor.{prefix}_charging_overtemperature_protection` | Charge OTP | warning |
+| discharge_otp | `binary_sensor.{prefix}_discharging_overtemperature_protection` | Discharge OTP | warning |
+| charge_utp | `binary_sensor.{prefix}_charging_undertemperature_protection` | Charge UTP | warning |
+| discharge_utp | `binary_sensor.{prefix}_discharging_undertemperature_protection` | Discharge UTP | warning |
+| soc_low | `binary_sensor.{prefix}_low_capacity_alarm` | Low SOC | warning |
+| cell_fault | `binary_sensor.{prefix}_cell_request_charge_voltage_failure_alarm` | Cell Fault | critical |
+
+#### YamBMS Integration Templates
+
+When `entity_pattern.integration` is set to `"yambms"`, these template patterns are used instead:
+
+##### Core Sensors
+| Key | Template Pattern |
+|-----|-----------------|
+| soc | `sensor.{prefix}_battery_soc` |
+| voltage | `sensor.{prefix}_total_voltage` |
+| current | `sensor.{prefix}_current` |
+| power | `sensor.{prefix}_power` |
+| capacity_remaining | `sensor.{prefix}_battery_capacity_remaining` |
+| capacity_full | `sensor.{prefix}_full_capacity` |
+| cycle_count | `sensor.{prefix}_charging_cycles` |
+| delta_voltage | `sensor.{prefix}_delta_cell_voltage` |
+| average_cell_voltage | `sensor.{prefix}_average_cell_voltage` |
+| soh | `sensor.{prefix}_state_of_health` |
+| status | `sensor.{prefix}_status` |
+
+##### Temperature Sensors
+| Key | Template Pattern |
+|-----|-----------------|
+| temp_mos | `sensor.{prefix}_mosfet_temperature` |
+| temp_env | `sensor.{prefix}_environment_temperature` |
+| temp_cell_pattern | `sensor.{prefix}_battery_temperature_{n}` |
+| min_temp | `sensor.{prefix}_min_temperature` |
+| max_temp | `sensor.{prefix}_max_temperature` |
+
+Temperature sensors use sequential patterns (`{n}` → `1`, `2`, `3`, `4`) and display sequential labels (Temp 1, Temp 2, ...). Default sensor count: 4.
+
+##### Cell Sensors
+| Key | Template Pattern |
+|-----|-----------------|
+| cell_voltage_pattern | `sensor.{prefix}_cell_voltage_{n}` |
+| cell_balancing_pattern | `binary_sensor.{prefix}_cell_balancing_{n}` |
+
+##### Binary Status Sensors
+| Key | Template Pattern |
+|-----|-----------------|
+| charging | `binary_sensor.{prefix}_charging` |
+| discharging | `binary_sensor.{prefix}_discharging` |
+| balancing_active | `binary_sensor.{prefix}_equalizing` |
+
+##### YamBMS Alarm Templates (Aggregate Text Sensors)
+
+YamBMS uses aggregate text sensors instead of individual binary sensors. These are active when their state is a non-empty string:
+
+| Alarm Key | Template Pattern | Label | Severity | Type |
+|-----------|-----------------|-------|----------|------|
+| warnings | `sensor.{prefix}_warnings` | Warnings | warning | text |
+| protections | `sensor.{prefix}_protections` | Protections | critical | text |
+| faults | `sensor.{prefix}_faults` | Faults | critical | text |
+
+When active, the alert badge displays "Label: message" (e.g., "Warnings: Cell OV"). When the state is empty, the alarm is considered inactive and hidden.
 
 #### Alarm Overrides
 
-Individual default alarms can be overridden or disabled using the \`alarm_overrides\` configuration:
+Individual default alarms can be overridden or disabled using the `alarm_overrides` configuration:
 
-\`\`\`yaml
+```yaml
 entities:
   alarm_overrides:
     cell_ovp: binary_sensor.custom_cell_ovp_entity  # Override entity
     soc_low: ""  # Disable this alarm (empty string)
-\`\`\`
+```
 
 ---
 
@@ -325,8 +390,12 @@ ha-bms-card/
 - Orchestrates child component rendering
 
 #### Entity Resolver (\`entity-resolver.ts\`)
-- Resolves entity IDs from templates using \`{prefix}\` and \`{n}\` placeholders
+- Resolves entity IDs from templates using `{prefix}`, `{n}`, and `{range}` placeholders
+- Selects template preset based on `entity_pattern.integration` (default or yambms)
 - Prioritizes explicit config over template patterns
+- Supports sequential temperature patterns (`{n}`) for YamBMS and range-based (`{range}`) for default
+- Resolves both binary sensor alarms and aggregate text sensor alarms
+- Provides `getNumericState()`, `getBinaryState()`, and `getStringState()` helpers
 - Caches resolved entities for performance
 - Detects relevant state changes for efficient re-rendering
 
@@ -360,8 +429,8 @@ ha-bms-card/
 
 #### Alert Badge (\`alert-badge.ts\`)
 - Compact alarm indicators in card header
-- Warning (orange) and critical (red) severity levels
-- Pulsing animation for critical alarms
+- Warning (orange) and critical (red) severity levels- Supports binary alarms (label only) and text alarms (label + message)
+- For text alarms, displays "Label: message" (e.g., "Warnings: Cell OV")- Pulsing animation for critical alarms
 
 #### Stat Card (\`stat-card.ts\`)
 - Displays key metrics (voltage, current, power, temps)
@@ -376,12 +445,14 @@ The card includes a comprehensive visual configuration editor accessible through
 
 ### Tab 1: General
 - Card title
+- Entity prefix pattern for auto-generation
+- Integration preset selector (Default, YamBMS)
 - Cell configuration (count, columns, mobile columns, layout, orientation)
 
 ### Tab 2: Entities
-- Entity prefix pattern for auto-generation
 - Core entity pickers (SOC, voltage, current, power, etc.)
-- Temperature sensor configuration
+- Health & status entity pickers (SOH, status)
+- Temperature sensor configuration (min/max temp, MOS, environment)
 
 ### Tab 3: Cells
 - Per-cell voltage entity overrides
@@ -394,11 +465,12 @@ The card includes a comprehensive visual configuration editor accessible through
 
 ### Tab 5: Display
 - Delta unit selection (mV or V)
-- Visibility toggles (power, temperatures, cycle count, capacity)
+- Visibility toggles (power, temperatures, cycle count, capacity, SOH, status)
 - Compact mode toggle
 
 ### Tab 6: Alerts
-- Default alarm entity overrides grid
+- **Default integration**: Binary sensor alarm entity overrides grid
+- **YamBMS integration**: Aggregate text sensor entity pickers (warnings, protections, faults)
 - Custom alarm configuration (add/remove/edit)
 
 ---
@@ -453,11 +525,15 @@ All clickable elements fire Home Assistant's \`hass-more-info\` event to open th
 ## Testing Checklist
 
 - [ ] Card renders with minimal config
-- [ ] Template patterns resolve correctly
+- [ ] Template patterns resolve correctly (default integration)
+- [ ] Template patterns resolve correctly (YamBMS integration)
+- [ ] Integration preset selector works in editor
 - [ ] Explicit entity overrides work
 - [ ] Cell grid layouts correctly (bank vs incremental)
 - [ ] Different cell counts work (8, 16, 24, 32)
-- [ ] Alerts display and pulse when active
+- [ ] Binary sensor alerts display and pulse when active
+- [ ] Aggregate text alerts display with message when non-empty
+- [ ] Text alerts hidden when state is empty string
 - [ ] Colors respond to voltage thresholds
 - [ ] Balancing indicator shows for active cells
 - [ ] Dark/light mode themes work
@@ -466,5 +542,11 @@ All clickable elements fire Home Assistant's \`hass-more-info\` event to open th
 - [ ] Visual editor generates valid config
 - [ ] Entity clicks open more-info dialogs
 - [ ] Mobile column layout works
-- [ ] Default alarms auto-generate from prefix
+- [ ] Default alarms auto-generate from prefix (default integration)
+- [ ] Default alarms auto-generate from prefix (YamBMS integration)
 - [ ] Alarm overrides disable/replace defaults
+- [ ] SOH stat displays when show_soh enabled
+- [ ] Status stat displays raw text when show_status enabled
+- [ ] Min/max temperature bars display for YamBMS
+- [ ] Sequential temperature labels (Temp 1, Temp 2, ...) for YamBMS
+- [ ] Range-based temperature labels (T1-4, T5-8, ...) for default

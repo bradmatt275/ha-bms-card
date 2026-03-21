@@ -572,7 +572,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
 
       <div class="section-header">Capacity</div>
       ${this._renderEntityField("capacity_remaining", "Remaining Capacity", ["sensor"])}
-      ${this._renderEntityField("capacity_full", "Full Capacity", ["sensor"])}
+      ${this._renderEntityField("capacity_full", "Full Capacity", ["sensor", "number"])}
       ${this._renderEntityField("cycle_count", "Cycle Count", ["sensor"])}
 
       <div class="section-header">Health & Status</div>

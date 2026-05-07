@@ -147,11 +147,48 @@ export const YAMBMS_TEMPLATES: DefaultTemplates = {
 };
 
 /**
+ * iBMS (PACE) entity templates using {prefix} placeholder
+ * These match the iBMS / PACE BMS integration naming conventions
+ */
+export const IBMS_TEMPLATES: DefaultTemplates = {
+  // Sensors
+  soc: "sensor.{prefix}_capacity_remaining",
+  voltage: "sensor.{prefix}_total_voltage",
+  current: "sensor.{prefix}_current",
+  power: "sensor.{prefix}_power",
+  capacity_remaining: "sensor.{prefix}_capacity_remaining_derived",
+  capacity_full: "sensor.{prefix}_total_battery_capacity_setting",
+  cycle_count: "sensor.{prefix}_charging_cycles",
+
+  // Health and status
+  soh: "sensor.{prefix}_battery_soh",
+
+  // Derived values (optional - card calculates if not present)
+  delta_voltage: "sensor.{prefix}_delta_cell_voltage",
+  average_cell_voltage: "sensor.{prefix}_average_cell_voltage",
+  min_cell_voltage: "sensor.{prefix}_min_cell_voltage",
+  max_cell_voltage: "sensor.{prefix}_max_cell_voltage",
+
+  // Temperatures
+  temp_mos: "sensor.{prefix}_power_tube_temperature",
+  temp_cell_pattern: "sensor.{prefix}_temperature_sensor_{n}",
+
+  // Cell voltages
+  cell_voltage_pattern: "sensor.{prefix}_cell_voltage_{n}",
+
+  // Binary sensors
+  charging: "binary_sensor.{prefix}_charging_switch",
+  discharging: "binary_sensor.{prefix}_discharging_switch",
+  balancing_active: "binary_sensor.{prefix}_balancing",
+};
+
+/**
  * Template presets keyed by integration name
  */
 export const TEMPLATE_PRESETS: Record<string, DefaultTemplates> = {
   default: DEFAULT_TEMPLATES,
   yambms: YAMBMS_TEMPLATES,
+  ibms: IBMS_TEMPLATES,
 };
 
 // ============================================================================
@@ -266,6 +303,7 @@ export const DEFAULT_DISPLAY_CONFIG: DisplayConfig = {
 export const DEFAULT_TEMP_SENSOR_COUNT: Record<string, number> = {
   default: 4,
   yambms: 4,
+  ibms: 4,
 };
 
 // ============================================================================

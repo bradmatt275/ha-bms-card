@@ -278,6 +278,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
             options: [
               { value: "default", label: "Default" },
               { value: "yambms", label: "YamBMS" },
+              { value: "ibms", label: "iBMS (PACE)" },
             ],
             mode: "dropdown",
           }}}

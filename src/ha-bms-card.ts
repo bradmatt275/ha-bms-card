@@ -584,7 +584,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
     }
 
     const tempEntityIds = this._getTempCellEntityIds();
-    const isSequential = this._entityResolver.getIntegration() === "yambms";
+    const isSequential = ["yambms", "ibms"].includes(this._entityResolver.getIntegration());
 
     return html`
       <div class="temp-section">

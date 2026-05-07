@@ -95,7 +95,7 @@ export interface EntityPattern {
   /** Prefix to replace {prefix} in templates */
   prefix?: string;
   /** Integration preset for entity naming patterns */
-  integration?: "default" | "yambms";
+  integration?: "default" | "yambms" | "ibms";
 }
 
 /**

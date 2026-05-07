@@ -147,8 +147,8 @@ export const YAMBMS_TEMPLATES: DefaultTemplates = {
 };
 
 /**
- * iBMS (PACE) entity templates using {prefix} placeholder
- * These match the iBMS / PACE BMS integration naming conventions
+ * iBMS entity templates using {prefix} placeholder
+ * These match the iBMS BMS integration naming conventions
  */
 export const IBMS_TEMPLATES: DefaultTemplates = {
   // Sensors

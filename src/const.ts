@@ -119,24 +119,25 @@ export const TEMPLATE_PRESETS: Record<string, DefaultTemplates> = {
 
 /**
  * JK BMS error bitmask map.
- * Matches the JK protection/fault bitmask as exposed by the iBMS integration.
- * Severity: protection events = critical, sensor/comm faults = warning.
+ * Source: iBMS protocol address 0x8B (Battery Warning Message), V2.5.
+ * Severity: over/under voltage+current and hardware trips = critical;
+ *           low SOC, imbalance, low temperature = warning.
  */
 export const JK_BITMASK_MAP: BitmaskEntry[] = [
-  { bit: 1,     label: "MOS over temperature",              severity: "critical" },
-  { bit: 2,     label: "Current sensor abnormal",           severity: "warning" },
-  { bit: 4,     label: "Coprocessor communication abnormal", severity: "warning" },
-  { bit: 8,     label: "Cell overvoltage",                  severity: "critical" },
-  { bit: 16,    label: "Battery overvoltage",               severity: "critical" },
-  { bit: 32,    label: "Charge overcurrent",                severity: "critical" },
-  { bit: 64,    label: "Charge short circuit",              severity: "critical" },
-  { bit: 128,   label: "Charge over temperature",           severity: "critical" },
-  { bit: 256,   label: "Charge low temperature",            severity: "warning" },
-  { bit: 512,   label: "Cell undervoltage",                 severity: "critical" },
-  { bit: 1024,  label: "Battery undervoltage",              severity: "critical" },
-  { bit: 2048,  label: "Discharge overcurrent",             severity: "critical" },
-  { bit: 4096,  label: "Discharge short circuit",           severity: "critical" },
-  { bit: 8192,  label: "Discharge over temperature",        severity: "critical" },
+  { bit: 1,     label: "Low state of charge",                  severity: "warning"  },
+  { bit: 2,     label: "MOSFET over-temperature",              severity: "critical" },
+  { bit: 4,     label: "Charge over-voltage",                  severity: "critical" },
+  { bit: 8,     label: "Discharge under-voltage",              severity: "critical" },
+  { bit: 16,    label: "Battery over-temperature",             severity: "critical" },
+  { bit: 32,    label: "Charge over-current",                  severity: "critical" },
+  { bit: 64,    label: "Discharge over-current",               severity: "critical" },
+  { bit: 128,   label: "Cell voltage imbalance",               severity: "warning"  },
+  { bit: 256,   label: "Enclosure over-temperature",           severity: "critical" },
+  { bit: 512,   label: "Battery low-temperature",              severity: "warning"  },
+  { bit: 1024,  label: "Cell over-voltage",                    severity: "critical" },
+  { bit: 2048,  label: "Cell under-voltage",                   severity: "critical" },
+  { bit: 4096,  label: "Hardware protection trip (primary)",   severity: "critical" },
+  { bit: 8192,  label: "Hardware protection trip (secondary)", severity: "critical" },
 ];
 
 /**

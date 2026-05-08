@@ -383,12 +383,17 @@ export class HABMSCard extends LitElement implements LovelaceCard {
               label="Grid/Solar"
             ></bms-status-indicator>
 
-            <bms-soc-ring
-              .soc=${state.soc}
-              .remaining=${state.capacityRemaining}
-              .hasAlarm=${hasCriticalAlarm}
-              .entityId=${this._getClickableEntityId("soc")}
-            ></bms-soc-ring>
+            <div class="soc-center">
+              <bms-soc-ring
+                .soc=${state.soc}
+                .remaining=${state.capacityRemaining}
+                .hasAlarm=${hasCriticalAlarm}
+                .entityId=${this._getClickableEntityId("soc")}
+              ></bms-soc-ring>
+              ${state.isBalancing
+                ? html`<div class="balancing-badge">Balancing</div>`
+                : nothing}
+            </div>
 
             <bms-status-indicator
               type="discharge"

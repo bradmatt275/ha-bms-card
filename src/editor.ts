@@ -248,6 +248,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
    * Render general settings tab
    */
   private _renderGeneralTab(): TemplateResult {
+    const integration = this._config.entity_pattern?.integration || "";
     return html`
       <div class="form-group">
         <label>Card Title</label>
@@ -259,6 +260,27 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       </div>
 
       <div class="form-group">
+        <label>Integration</label>
+        <ha-selector
+          .hass=${this.hass}
+          .selector=${{ select: {
+            options: [
+              { value: "", label: "None (manual)" },
+              { value: "yambms", label: "YamBMS" },
+              { value: "ibms", label: "iBMS" },
+            ],
+            mode: "dropdown",
+          }}}
+          .value=${integration}
+          @value-changed=${(e: CustomEvent) => this._updateEntityPattern("integration", e.detail.value)}
+        ></ha-selector>
+        <span class="help-text">
+          Select your BMS integration to auto-match entity naming patterns.
+        </span>
+      </div>
+
+      ${integration !== "" ? html`
+      <div class="form-group">
         <label>Entity Prefix</label>
         <ha-textfield
           .value=${this._config.entity_pattern?.prefix || ""}
@@ -269,26 +291,7 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           Used to auto-generate entity IDs (e.g., sensor.pack_1_battery_soc)
         </span>
       </div>
-
-      <div class="form-group">
-        <label>Integration</label>
-        <ha-selector
-          .hass=${this.hass}
-          .selector=${{ select: {
-            options: [
-              { value: "default", label: "Default" },
-              { value: "yambms", label: "YamBMS" },
-              { value: "ibms", label: "iBMS" },
-            ],
-            mode: "dropdown",
-          }}}
-          .value=${this._config.entity_pattern?.integration || "default"}
-          @value-changed=${(e: CustomEvent) => this._updateEntityPattern("integration", e.detail.value)}
-        ></ha-selector>
-        <span class="help-text">
-          Select your BMS integration to auto-match entity naming patterns.
-        </span>
-      </div>
+      ` : nothing}
     `;
   }
 

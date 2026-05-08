@@ -6,7 +6,6 @@
 import { HomeAssistant } from "custom-card-helpers";
 import { BMSCardConfig, AlarmConfig, DefaultTemplates } from "./types";
 import {
-  DEFAULT_TEMPLATES,
   DEFAULT_ALARMS,
   YAMBMS_DEFAULT_ALARMS,
   TEMPLATE_PRESETS,
@@ -57,8 +56,8 @@ export class EntityResolver {
   constructor(config: BMSCardConfig) {
     this._config = config;
     this._prefix = config.entity_pattern?.prefix ?? "";
-    this._integration = config.entity_pattern?.integration ?? "default";
-    this._templates = TEMPLATE_PRESETS[this._integration] || DEFAULT_TEMPLATES;
+    this._integration = config.entity_pattern?.integration ?? "";
+    this._templates = TEMPLATE_PRESETS[this._integration] || ({} as DefaultTemplates);
     this._resolveAllEntities();
   }
 

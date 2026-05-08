@@ -18,87 +18,6 @@ import {
 // ============================================================================
 
 /**
- * Default entity templates using {prefix} placeholder
- * These are used when entity_pattern.prefix is configured
- */
-export const DEFAULT_TEMPLATES: DefaultTemplates = {
-  // Sensors
-  soc: "sensor.{prefix}_battery_soc",
-  voltage: "sensor.{prefix}_battery_voltage",
-  current: "sensor.{prefix}_battery_current",
-  power: "sensor.{prefix}_battery_power",
-  capacity_remaining: "sensor.{prefix}_remaining_capacity",
-  capacity_full: "sensor.{prefix}_battery_full_capacity",
-  cycle_count: "sensor.{prefix}_cycle_count",
-
-  // Derived values (optional - card calculates if not present)
-  delta_voltage: "sensor.{prefix}_delta_voltage",
-  average_cell_voltage: "sensor.{prefix}_avg_cell_voltage",
-  min_cell_voltage: "sensor.{prefix}_min_cell_voltage",
-  max_cell_voltage: "sensor.{prefix}_max_cell_voltage",
-
-  // Temperatures
-  temp_mos: "sensor.{prefix}_mos_temp",
-  temp_env: "sensor.{prefix}_env_temp",
-  temp_cell_pattern: "sensor.{prefix}_cell_temp_{range}",
-
-  // Cell voltages
-  cell_voltage_pattern: "sensor.{prefix}_cell_{n}_voltage",
-
-  // Cell balancing
-  cell_balancing_pattern: "binary_sensor.{prefix}_cell_{n}_balancing",
-
-  // Binary sensors
-  charging: "binary_sensor.{prefix}_charge_mos",
-  discharging: "binary_sensor.{prefix}_discharge_mos",
-  balancing_active: "binary_sensor.{prefix}_balancing",
-  heater: "binary_sensor.{prefix}_heater",
-
-  // Protection Status alarms (critical - active protection triggered)
-  alarm_cell_ovp: "binary_sensor.{prefix}_cell_ovp",
-  alarm_cell_uvp: "binary_sensor.{prefix}_cell_uvp",
-  alarm_pack_uvp: "binary_sensor.{prefix}_pack_uvp",
-  alarm_discharge_ocp: "binary_sensor.{prefix}_dsg_ocp",
-  alarm_charge_ocp: "binary_sensor.{prefix}_chg_ocp",
-  alarm_scp: "binary_sensor.{prefix}_scp_protection",
-  alarm_mos_otp: "binary_sensor.{prefix}_mos_otp",
-  alarm_env_otp: "binary_sensor.{prefix}_env_otp",
-  alarm_env_utp: "binary_sensor.{prefix}_env_utp",
-  alarm_dsg_otp: "binary_sensor.{prefix}_dsg_otp",
-  alarm_chg_otp: "binary_sensor.{prefix}_chg_otp",
-  alarm_dsg_utp: "binary_sensor.{prefix}_dsg_utp",
-  alarm_chg_utp: "binary_sensor.{prefix}_chg_utp",
-
-  // Alarm Status (warning level - pre-protection alerts)
-  alarm_soc_low: "binary_sensor.{prefix}_alarm_soc_low",
-  alarm_cell_ov: "binary_sensor.{prefix}_alarm_cell_ov",
-  alarm_cell_uv: "binary_sensor.{prefix}_alarm_cell_uv",
-  alarm_pack_ov: "binary_sensor.{prefix}_alarm_pack_ov",
-  alarm_pack_uv: "binary_sensor.{prefix}_alarm_pack_uv",
-  alarm_dsg_oc: "binary_sensor.{prefix}_alarm_dsg_oc",
-  alarm_chg_oc: "binary_sensor.{prefix}_alarm_chg_oc",
-  alarm_mos_ot: "binary_sensor.{prefix}_alarm_mos_ot",
-  alarm_env_ot: "binary_sensor.{prefix}_alarm_env_ot",
-  alarm_env_ut: "binary_sensor.{prefix}_alarm_env_ut",
-  alarm_dsg_ot: "binary_sensor.{prefix}_alarm_dsg_ot",
-  alarm_chg_ot: "binary_sensor.{prefix}_alarm_chg_ot",
-  alarm_dsg_ut: "binary_sensor.{prefix}_alarm_dsg_ut",
-  alarm_chg_ut: "binary_sensor.{prefix}_alarm_chg_ut",
-
-  // Fault Status (critical - hardware faults)
-  alarm_cell_fault: "binary_sensor.{prefix}_bms_cell_fault",
-  alarm_ntc_fault: "binary_sensor.{prefix}_bms_ntc_fault",
-  alarm_heater_fault: "binary_sensor.{prefix}_bms_heater_fault",
-  alarm_ccb_fault: "binary_sensor.{prefix}_bms_ccb_fault",
-  alarm_sampling_fault: "binary_sensor.{prefix}_bms_sampling_fault",
-  alarm_dsg_mos_fault: "binary_sensor.{prefix}_bms_dsg_mos_fault",
-  alarm_chg_mos_fault: "binary_sensor.{prefix}_bms_chg_mos_fault",
-
-  // Low battery
-  alarm_battery_low: "binary_sensor.{prefix}_battery_low_power",
-};
-
-/**
  * YamBMS entity templates using {prefix} placeholder
  * These match the YamBMS / BMS_BLE integration naming conventions
  */
@@ -186,7 +105,6 @@ export const IBMS_TEMPLATES: DefaultTemplates = {
  * Template presets keyed by integration name
  */
 export const TEMPLATE_PRESETS: Record<string, DefaultTemplates> = {
-  default: DEFAULT_TEMPLATES,
   yambms: YAMBMS_TEMPLATES,
   ibms: IBMS_TEMPLATES,
 };

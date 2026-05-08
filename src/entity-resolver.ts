@@ -51,6 +51,7 @@ export class EntityResolver {
     "discharging",
     "balancing_active",
     "heater",
+    "errors_bitmask",
   ];
 
   constructor(config: BMSCardConfig) {
@@ -228,10 +229,12 @@ export class EntityResolver {
 
   /**
    * Resolve alarm entities
-   * Supports both binary sensor alarms (default) and aggregate text alarms (yambms)
+   * Supports binary sensor alarms (default), aggregate text alarms (yambms),
+   * and numeric bitmask alarms (bms_device).
    */
   private _resolveAlarmEntities(): void {
     const alarms = this._config.entities?.alarms;
+    const bmsDevice = this._config.entity_pattern?.bms_device;
 
     // Use explicit alarms if provided
     if (Array.isArray(alarms) && alarms.length > 0) {
@@ -239,6 +242,22 @@ export class EntityResolver {
       alarms.forEach((alarm) => {
         this._allEntityIds.push(alarm.entity);
       });
+      return;
+    }
+
+    // Inject bitmask alarm when bms_device is set
+    if (bmsDevice) {
+      const entity = this._resolveEntity("errors_bitmask");
+      if (entity) {
+        this._alarmEntities = [{
+          entity,
+          label: "BMS Error",
+          severity: "critical" as const,
+          type: "bitmask" as const,
+          bitmask_map_name: bmsDevice,
+        }];
+        this._allEntityIds.push(entity);
+      }
       return;
     }
 

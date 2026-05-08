@@ -15,8 +15,8 @@ import {
   DEFAULT_DISPLAY_CONFIG,
   SUPPORTED_CELL_COUNTS,
   SUPPORTED_COLUMN_COUNTS,
-  DEFAULT_ALARMS,
   YAMBMS_DEFAULT_ALARMS,
+  BMS_DEVICE_OPTIONS,
 } from "./const";
 
 @customElement("ha-bms-card-editor")
@@ -594,6 +594,12 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       ${this._renderEntityField("discharging", "Discharging Status", ["binary_sensor", "switch"])}
       ${this._renderEntityField("balancing_active", "Balancing Active", ["binary_sensor"])}
 
+      <div class="section-header">Error Bitmask</div>
+      <div class="help-text" style="margin-bottom: 8px;">
+        Override the auto-resolved error bitmask entity. Only needed if the prefix pattern doesn't match.
+      </div>
+      ${this._renderEntityField("errors_bitmask", "Error Bitmask Entity", ["sensor"])}
+
       <div class="section-header">Cell Voltage Overrides</div>
       <div class="help-text" style="margin-bottom: 8px;">
         Override individual cell voltage entities. Leave empty to use the pattern.
@@ -654,19 +660,36 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
    */
   private _renderAlertsTab(): TemplateResult {
     const integration = this._config.entity_pattern?.integration || "default";
+    const bmsDevice = this._config.entity_pattern?.bms_device || "";
     const alarms = this._config.entities?.alarms || [];
 
     return html`
+      <div class="section-header">BMS Error Reporting</div>
       <div class="help-text" style="margin-bottom: 12px;">
-        Configure alarm entities to monitor. When using an entity prefix, default alarms are auto-generated.
-        ${integration === "yambms"
-          ? "YamBMS uses aggregate text sensors for warnings, protections, and faults."
-          : "Override specific entities below or add custom alarms."}
+        Select your BMS hardware to automatically decode the error bitmask sensor
+        into individual alarm badges.
+      </div>
+
+      <div class="form-group">
+        <label>BMS Device</label>
+        <ha-selector
+          .hass=${this.hass}
+          .selector=${{ select: {
+            options: BMS_DEVICE_OPTIONS,
+            mode: "dropdown",
+          }}}
+          .value=${bmsDevice}
+          @value-changed=${(e: CustomEvent) => this._updateEntityPattern("bms_device", e.detail.value)}
+        ></ha-selector>
+        <span class="help-text">
+          The error bitmask entity is resolved automatically from the entity prefix.
+          Override it on the Entities tab if needed.
+        </span>
       </div>
 
       ${integration === "yambms"
         ? this._renderYambmsAlarmSection()
-        : this._renderDefaultAlarmSection()}
+        : nothing}
 
       <div class="section-header" style="margin-top: 24px;">Additional Custom Alarms</div>
       <div class="help-text" style="margin-bottom: 8px;">
@@ -680,34 +703,6 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
           <ha-icon icon="mdi:plus"></ha-icon>
           Add Alarm
         </mwc-button>
-      </div>
-    `;
-  }
-
-  /**
-   * Render default integration alarm overrides (binary sensors)
-   */
-  private _renderDefaultAlarmSection(): TemplateResult {
-    const overrides = this._config.entities?.alarm_overrides || {};
-
-    return html`
-      <div class="section-header">Default Alarm Entity Overrides</div>
-      <div class="help-text" style="margin-bottom: 8px;">
-        Override the auto-generated entity IDs for default alarms. Leave empty to use the pattern.
-      </div>
-      
-      <div class="cell-grid-overrides">
-        ${DEFAULT_ALARMS.map((alarm) => html`
-          <div class="form-group cell-override">
-            <label>${alarm.label}</label>
-            <ha-selector
-              .hass=${this.hass}
-              .selector=${{ entity: { domain: ["binary_sensor"] } }}
-              .value=${overrides[alarm.key] || ""}
-              @value-changed=${(e: CustomEvent) => this._updateAlarmOverride(alarm.key, e.detail.value || "")}
-            ></ha-selector>
-          </div>
-        `)}
       </div>
     `;
   }
@@ -928,27 +923,6 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       this._config = { ...this._config, entities };
       this._fireConfigChanged();
     }
-  }
-
-  private _updateAlarmOverride(key: string, value: string): void {
-    const entities = { ...this._config.entities };
-    const overrides = { ...(entities.alarm_overrides || {}) };
-    
-    if (value) {
-      overrides[key] = value;
-    } else {
-      delete overrides[key];
-    }
-    
-    // Remove the overrides object if empty
-    if (Object.keys(overrides).length > 0) {
-      entities.alarm_overrides = overrides;
-    } else {
-      delete entities.alarm_overrides;
-    }
-    
-    this._config = { ...this._config, entities };
-    this._fireConfigChanged();
   }
 
   /**

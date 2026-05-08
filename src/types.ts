@@ -89,6 +89,18 @@ export interface DisplayConfig {
 }
 
 /**
+ * A single entry in a bitmask decode map
+ */
+export interface BitmaskEntry {
+  /** The bit value to test (e.g. 1, 2, 4, 8, ...) */
+  bit: number;
+  /** Human-readable label shown in the alarm badge */
+  label: string;
+  /** Severity level */
+  severity: "warning" | "critical";
+}
+
+/**
  * Entity pattern for template-based entity resolution
  */
 export interface EntityPattern {
@@ -96,6 +108,8 @@ export interface EntityPattern {
   prefix?: string;
   /** Integration preset for entity naming patterns */
   integration?: "default" | "yambms" | "ibms";
+  /** BMS hardware device — selects the built-in bitmask decode map */
+  bms_device?: string;
 }
 
 /**
@@ -162,6 +176,10 @@ export interface EntityConfig {
   /** Heater enabled */
   heater?: string;
 
+  // Error bitmask entity override
+  /** Error bitmask sensor (used with bms_device bitmask maps) */
+  errors_bitmask?: string;
+
   // Alarms
   /** Array of alarm configurations */
   alarms?: AlarmConfig[];
@@ -186,8 +204,12 @@ export interface AlarmConfig {
   label: string;
   /** Severity level */
   severity: "warning" | "critical";
-  /** Alarm type: binary (on/off) or text (non-empty = active) */
-  type?: "binary" | "text";
+  /** Alarm type: binary (on/off), text (non-empty = active), or bitmask (numeric) */
+  type?: "binary" | "text" | "bitmask";
+  /** Named built-in bitmask map (e.g. "jk", "pace") */
+  bitmask_map_name?: string;
+  /** Inline bitmask map — overrides bitmask_map_name if both are set */
+  bitmask_map?: BitmaskEntry[];
 }
 
 // ============================================================================

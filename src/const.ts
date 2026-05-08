@@ -11,6 +11,7 @@ import {
   DisplayConfig,
   DefaultTemplates,
   AlarmConfig,
+  BitmaskEntry,
 } from "./types";
 
 // ============================================================================
@@ -99,6 +100,9 @@ export const IBMS_TEMPLATES: DefaultTemplates = {
   charging: "binary_sensor.{prefix}_charging_switch",
   discharging: "binary_sensor.{prefix}_discharging_switch",
   balancing_active: "binary_sensor.{prefix}_balancing",
+
+  // Error bitmask
+  errors_bitmask: "sensor.{prefix}_errors_bitmask",
 };
 
 /**
@@ -108,6 +112,61 @@ export const TEMPLATE_PRESETS: Record<string, DefaultTemplates> = {
   yambms: YAMBMS_TEMPLATES,
   ibms: IBMS_TEMPLATES,
 };
+
+// ============================================================================
+// Bitmask Decode Maps
+// ============================================================================
+
+/**
+ * JK BMS error bitmask map.
+ * Matches the JK protection/fault bitmask as exposed by the iBMS integration.
+ * Severity: protection events = critical, sensor/comm faults = warning.
+ */
+export const JK_BITMASK_MAP: BitmaskEntry[] = [
+  { bit: 1,     label: "MOS over temperature",              severity: "critical" },
+  { bit: 2,     label: "Current sensor abnormal",           severity: "warning" },
+  { bit: 4,     label: "Coprocessor communication abnormal", severity: "warning" },
+  { bit: 8,     label: "Cell overvoltage",                  severity: "critical" },
+  { bit: 16,    label: "Battery overvoltage",               severity: "critical" },
+  { bit: 32,    label: "Charge overcurrent",                severity: "critical" },
+  { bit: 64,    label: "Charge short circuit",              severity: "critical" },
+  { bit: 128,   label: "Charge over temperature",           severity: "critical" },
+  { bit: 256,   label: "Charge low temperature",            severity: "warning" },
+  { bit: 512,   label: "Cell undervoltage",                 severity: "critical" },
+  { bit: 1024,  label: "Battery undervoltage",              severity: "critical" },
+  { bit: 2048,  label: "Discharge overcurrent",             severity: "critical" },
+  { bit: 4096,  label: "Discharge short circuit",           severity: "critical" },
+  { bit: 8192,  label: "Discharge over temperature",        severity: "critical" },
+];
+
+/**
+ * PACE BMS error bitmask map.
+ * The iBMS integration combines the PACE warning/protection/fault registers
+ * into a single bitmask. The exact bit mapping depends on the integration
+ * version — this map is a placeholder until confirmed against a live error.
+ *
+ * TODO: verify bit positions by triggering a known PACE fault and checking
+ * the numeric value of sensor.{prefix}_errors_bitmask.
+ */
+export const PACE_BITMASK_MAP: BitmaskEntry[] = [];
+
+/**
+ * All named bitmask maps, keyed by bms_device value.
+ * Add new BMS devices here to support additional hardware.
+ */
+export const BITMASK_MAPS: Record<string, BitmaskEntry[]> = {
+  jk: JK_BITMASK_MAP,
+  pace: PACE_BITMASK_MAP,
+};
+
+/**
+ * Options for the BMS Device selector in the editor.
+ */
+export const BMS_DEVICE_OPTIONS = [
+  { value: "",     label: "None" },
+  { value: "jk",   label: "JK BMS" },
+  { value: "pace", label: "PACE BMS" },
+];
 
 // ============================================================================
 // Default Alarms

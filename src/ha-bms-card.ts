@@ -16,6 +16,7 @@ import {
   DEFAULT_TEMPERATURE_CONFIG,
   DEFAULT_DISPLAY_CONFIG,
   CARD_INFO,
+  BITMASK_MAPS,
 } from "./const";
 // Format utilities imported as needed
 import { evaluateDeltaState } from "./utils/threshold";
@@ -281,7 +282,8 @@ export class HABMSCard extends LitElement implements LovelaceCard {
 
   /**
    * Get list of active alarms
-   * Supports both binary alarms (on/off) and text alarms (non-empty = active)
+   * Supports binary alarms (on/off), text alarms (non-empty = active),
+   * and bitmask alarms (each set bit produces one ActiveAlarm entry).
    */
   private _getActiveAlarms(): ActiveAlarm[] {
     const alarms = this._entityResolver.getAlarms();
@@ -297,6 +299,22 @@ export class HABMSCard extends LitElement implements LovelaceCard {
             severity: alarm.severity,
             message: state,
           });
+        }
+      } else if (alarm.type === "bitmask") {
+        // Bitmask alarm: decode numeric value, one badge per active bit
+        const numericState = this._entityResolver.getNumericState(this.hass, alarm.entity);
+        if (numericState !== null && numericState !== 0) {
+          const map = alarm.bitmask_map ?? (alarm.bitmask_map_name ? BITMASK_MAPS[alarm.bitmask_map_name] : undefined);
+          if (map) {
+            for (const entry of map) {
+              if (numericState & entry.bit) {
+                activeAlarms.push({
+                  label: entry.label,
+                  severity: entry.severity,
+                });
+              }
+            }
+          }
         }
       } else {
         // Binary alarm: active when state is "on"

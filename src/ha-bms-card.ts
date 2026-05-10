@@ -158,16 +158,30 @@ export class HABMSCard extends LitElement implements LovelaceCard {
 
     const resolver = this._entityResolver;
 
+    // Resolve pack-level balancing state upfront
+    const isBalancing = resolver.getBinaryState(
+      this.hass,
+      resolver.getEntity("balancing_active")
+    );
+
+    // Determine whether cell-level balancing entities are configured
+    const hasCellLevelBalancing = !!resolver.getCellBalancingEntity(1);
+
     // Update cell data
     const cells: CellData[] = [];
     for (let i = 1; i <= this._config.cells.count; i++) {
       const voltageEntity = resolver.getCellVoltageEntity(i);
       const balancingEntity = resolver.getCellBalancingEntity(i);
 
+      // Use per-cell entity when available; fall back to pack-level state for all cells
+      const cellBalancing = hasCellLevelBalancing
+        ? resolver.getBinaryState(this.hass, balancingEntity)
+        : isBalancing;
+
       cells.push({
         number: i,
         voltage: resolver.getNumericState(this.hass, voltageEntity),
-        balancing: resolver.getBinaryState(this.hass, balancingEntity),
+        balancing: cellBalancing,
       });
     }
 
@@ -271,10 +285,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
       maxCellNumber,
       isCharging: isActuallyCharging,
       isDischarging: isActuallyDischarging,
-      isBalancing: resolver.getBinaryState(
-        this.hass,
-        resolver.getEntity("balancing_active")
-      ),
+      isBalancing,
       heaterOn: resolver.getBinaryState(this.hass, resolver.getEntity("heater")),
       activeAlarms,
     };
@@ -390,9 +401,7 @@ export class HABMSCard extends LitElement implements LovelaceCard {
                 .hasAlarm=${hasCriticalAlarm}
                 .entityId=${this._getClickableEntityId("soc")}
               ></bms-soc-ring>
-              ${state.isBalancing
-                ? html`<div class="balancing-badge">Balancing</div>`
-                : nothing}
+  
             </div>
 
             <bms-status-indicator

@@ -149,17 +149,19 @@ export class EntityResolver {
     const cellCount = this._config.cells.count;
     const cellBalancing = this._config.entities?.cell_balancing;
 
-    // Only resolve if pattern is configured
-    if (!cellBalancing?.pattern && !this._prefix) {
-      return;
-    }
-
     for (let i = 1; i <= cellCount; i++) {
       let entity: string | undefined;
 
-      if (cellBalancing?.pattern) {
+      // Check explicit array
+      if (Array.isArray(cellBalancing) && cellBalancing[i - 1]) {
+        entity = cellBalancing[i - 1];
+      }
+      // Check pattern in config
+      else if (cellBalancing && typeof cellBalancing === "object" && "pattern" in cellBalancing) {
         entity = this._applyCellTemplate(cellBalancing.pattern, i);
-      } else if (this._prefix && this._templates.cell_balancing_pattern) {
+      }
+      // Use default pattern
+      else if (this._prefix && this._templates.cell_balancing_pattern) {
         entity = this._applyCellTemplate(this._templates.cell_balancing_pattern, i);
       }
 

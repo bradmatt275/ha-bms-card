@@ -126,18 +126,6 @@ export const cardStyles = css`
     gap: 6px;
   }
 
-  .balancing-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--bms-balancing);
-    border: 1px solid var(--bms-balancing);
-    border-radius: 10px;
-    padding: 2px 8px;
-    animation: pulse var(--bms-pulse-duration) ease-in-out infinite;
-  }
-
   /* Stats Grid */
   .stats-grid {
     display: grid;

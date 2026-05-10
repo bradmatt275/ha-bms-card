@@ -605,6 +605,12 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
         Override individual cell voltage entities. Leave empty to use the pattern.
       </div>
       ${this._renderCellVoltageOverrides()}
+
+      <div class="section-header">Cell Balancing Overrides</div>
+      <div class="help-text" style="margin-bottom: 8px;">
+        Override individual cell balancing entities. Leave empty to use the pattern.
+      </div>
+      ${this._renderCellBalancingOverrides()}
     `;
   }
 
@@ -628,6 +634,34 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
             .selector=${{ entity: { domain: ["sensor"] } }}
             .value=${existingValues[i] || ""}
             @value-changed=${(e: CustomEvent) => this._updateCellVoltage(i, e.detail.value || "")}
+          ></ha-selector>
+        </div>
+      `);
+    }
+
+    return html`<div class="cell-grid-overrides">${cells}</div>`;
+  }
+
+  /**
+   * Render cell balancing override fields based on cell count
+   */
+  private _renderCellBalancingOverrides(): TemplateResult {
+    const cellCount = this._config.cells?.count || 16;
+    const cellBalancing = this._config.entities?.cell_balancing;
+
+    // Get existing values if it's an array
+    const existingValues: string[] = Array.isArray(cellBalancing) ? cellBalancing : [];
+
+    const cells = [];
+    for (let i = 0; i < cellCount; i++) {
+      cells.push(html`
+        <div class="form-group cell-override">
+          <label>Cell ${i + 1}</label>
+          <ha-selector
+            .hass=${this.hass}
+            .selector=${{ entity: { domain: ["binary_sensor"] } }}
+            .value=${existingValues[i] || ""}
+            @value-changed=${(e: CustomEvent) => this._updateCellBalancing(i, e.detail.value || "")}
           ></ha-selector>
         </div>
       `);
@@ -886,6 +920,38 @@ export class HABMSCardEditor extends LitElement implements LovelaceCardEditor {
       entities.cell_voltages = cellVoltages;
     } else {
       delete entities.cell_voltages;
+    }
+
+    this._config = { ...this._config, entities };
+    this._fireConfigChanged();
+  }
+
+  private _updateCellBalancing(index: number, value: string): void {
+    const entities = { ...this._config.entities };
+    const cellCount = this._config.cells?.count || 16;
+
+    // Get existing array or create new one
+    let cellBalancing: string[] = [];
+    if (Array.isArray(entities.cell_balancing)) {
+      cellBalancing = [...entities.cell_balancing];
+    } else {
+      cellBalancing = new Array(cellCount).fill("");
+    }
+
+    // Ensure array is large enough
+    while (cellBalancing.length < cellCount) {
+      cellBalancing.push("");
+    }
+
+    // Update the specific cell
+    cellBalancing[index] = value;
+
+    // Check if all values are empty - if so, remove the array entirely
+    const hasAnyValue = cellBalancing.some(v => v && v.length > 0);
+    if (hasAnyValue) {
+      entities.cell_balancing = cellBalancing;
+    } else {
+      delete entities.cell_balancing;
     }
 
     this._config = { ...this._config, entities };

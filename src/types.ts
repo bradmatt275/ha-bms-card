@@ -163,8 +163,8 @@ export interface EntityConfig {
   // Cell data
   /** Cell voltage entities - array or pattern object */
   cell_voltages?: string[] | { pattern: string };
-  /** Cell balancing status pattern */
-  cell_balancing?: { pattern: string };
+  /** Cell balancing status entities - explicit array or pattern object */
+  cell_balancing?: string[] | { pattern: string };
 
   // System status
   /** Charge MOS enabled */
